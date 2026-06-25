@@ -26,7 +26,9 @@ token_table = Table(
 
 
 app = FastAPI()
-engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+engine = create_engine(
+    "sqlite:///sqlite.db", connect_args={"autocommit": False}
+)
 
 
 @app.post("/signup")
