@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData
-from sqlalchemy import Table, Column, Integer, String, DateTime
+from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey
 
 metadata_obj = MetaData()
 
@@ -10,6 +10,7 @@ user_table = Table(
   metadata_obj,
   Column("id", Integer, primary_key=True),
   Column("fullname", String),
+  Column("email", String),
   Column("password_hash", String),
 )
 
@@ -17,6 +18,7 @@ token_table = Table(
   "token",
   metadata_obj,
   Column("id", Integer, primary_key=True),
+  Column("user_id", ForeignKey("user.id"), nullable=False),
   Column("value", String),
   Column("expires", DateTime),
 )
