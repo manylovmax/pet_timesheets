@@ -19,6 +19,7 @@ token_table = Table(
   metadata_obj,
   Column("id", Integer, primary_key=True),
   Column("user_id", ForeignKey("user.id"), nullable=False),
+  Column("type", String),
   Column("value", String),
   Column("expires", DateTime),
 )
