@@ -21,8 +21,10 @@ token_table = Table(
   Column("expires", DateTime),
 )
 
+
 app = FastAPI()
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+
 
 @app.post("/signup")
 async def signup():
@@ -36,5 +38,15 @@ async def login():
 
 @app.post("/logout")
 async def logout():
+  return {"message": "Hello World"}
+
+
+@app.post("/check")
+async def check():
+  return {"message": "Hello World"}
+
+
+@app.post("/refresh")
+async def refresh():
   return {"message": "Hello World"}
 
