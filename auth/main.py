@@ -1,35 +1,52 @@
 import re
+import bcrypt
 
+from datetime import datetime, timedelta
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy import MetaData
-from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import create_engine, ForeignKey, select
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Session
+from sqlalchemy.exc import NoResultFound
 from pydantic import BaseModel, Field, BeforeValidator, AfterValidator, model_validator
-from typing import Annotated
+from typing import Annotated, List
 from typing_extensions import Self
+from enum import Enum
+from uuid import uuid4
 
 email_pattern = re.compile("^[^@]+@[^@]+\.[^@]{2,}$")
 
-metadata_obj = MetaData()
 
-user_table = Table(
-  "user",
-  metadata_obj,
-  Column("id", Integer, primary_key=True),
-  Column("fullname", String),
-  Column("email", String),
-  Column("password_hash", String),
-)
+class TokenType(Enum):
+  access = 'access'
+  refresh = 'refresh'
+  reset = 'reset'
 
-token_table = Table(
-  "token",
-  metadata_obj,
-  Column("id", Integer, primary_key=True),
-  Column("user_id", ForeignKey("user.id"), nullable=False),
-  Column("type", String),
-  Column("value", String),
-  Column("expires", DateTime),
-)
+
+class OrmBase(DeclarativeBase):
+  pass
+
+class User(OrmBase):
+  __tablename__ = 'user'
+  id: Mapped[int] = mapped_column(primary_key=True)
+  fullname: Mapped[str]
+  email: Mapped[str]
+  password_hash: Mapped[str]
+  tokens: Mapped[List["Token"]] = relationship(back_populates="user", cascade="all")
+
+  def __repr__(self) -> str:
+    return f"User(id={self.id!r}, fullname={self.fullname!r}, email={self.email!r})"
+
+
+class Token(OrmBase):
+  __tablename__ = 'token'
+  id: Mapped[int] = mapped_column(primary_key=True)
+  user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+  user: Mapped["User"] = relationship(back_populates="tokens")
+  type: Mapped[str]
+  value: Mapped[str]
+  expires: Mapped[datetime]
+
+  def __repr__(self) -> str:
+    return f"Token(id={self.id!r}, type={self.type!r}, value={self.value!r}, expires={self.expires!r})"
 
 
 app = FastAPI()
@@ -66,10 +83,58 @@ class SignupBody(BaseModel):
     return self
 
 
+def get_hashed_password(plain_text_password):
+    # Hash a password for the first time
+    #   (Using bcrypt, the salt is saved into the hash itself)
+    return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
+
+def check_password(plain_text_password, hashed_password):
+    # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+    return bcrypt.checkpw(plain_text_password, hashed_password)
+
+def generate_access_token():
+  return uuid4()
+
+
 @app.post("/signup")
 async def signup(form: SignupBody):
   user_dict = form.model_dump()
-  return {"message": "Hello World"}
+
+  unique_email = False
+  session = Session(engine)
+  stmt = select(User).where(User.email == user_dict.email)
+  try:
+    user = session.scalars(stmt).one()
+  except NoResultFound:
+    unique_email = True
+
+  if not unique_email:
+    return {
+      "success": False,
+      "error": "Email is occupied. Try different one."
+    }
+  
+  with session:
+    access_token = generate_access_token()
+    refresh_token = generate_access_token()
+    new_user = User(
+      fullname=user_dict.fullname,
+      email=user_dict.email,
+      pasword_hash=get_hashed_password(user_dict.password),
+      tokens=[
+        Token(value=access_token, type=TokenType.access, expires=datetime.now() + timedelta(hours=24)),
+        Token(value=refresh_token, type=TokenType.refresh, expires=datetime.now() + timedelta(days=7)),
+      ]
+    )
+    session.add(new_user)
+    session.commit()
+
+
+  return {
+    "success": True,
+    "access_token": access_token,
+    "refresh_token": refresh_token,  
+  }
 
 
 @app.post("/login")
