@@ -1,7 +1,7 @@
 import os
 import time
 
-from datetime import datetime, date as Date
+from datetime import date as Date
 from fastapi import FastAPI
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
