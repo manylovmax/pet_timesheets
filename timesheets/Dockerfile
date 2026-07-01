@@ -13,8 +13,10 @@ COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system --deploy
 
 # Copy application code
-COPY . .
+COPY timesheets_service /app/timesheets_service
+WORKDIR /app/timesheets_service
 
 # Run the application
-RUN ["alembic", "upgrade",  "head"]
-CMD ["python", "uvicorn",  "main:app", "--host 0.0.0.0",  "--port 8080"]
+RUN alembic upgrade head
+WORKDIR /app
+CMD ["uvicorn",  "timesheets_service.main:app", "--host", "0.0.0.0",  "--port", "80"]

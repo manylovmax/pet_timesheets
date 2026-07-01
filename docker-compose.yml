@@ -1,10 +1,27 @@
 services:
   auth_service:
-    build: auth_service/
+    build: auth/
+    networks:
+      - backend_net
 
   timesheets_service:
-    build: timesheets_service/
+    build: timesheets/
+    networks:
+      - backend_net
 
-  nginx:
+  api_gateway:
     build: nginx/
-    ports: 80:80
+    ports: 
+      - 8080:80
+    networks:
+      - frontend_net
+      - backend_net
+    depends_on:
+      - auth_service
+      - timesheets_service
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge

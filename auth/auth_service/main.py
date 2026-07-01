@@ -14,7 +14,7 @@ from typing_extensions import Self
 from enum import Enum
 from uuid import uuid4
 
-from .models import User, Token
+from auth_service.models import User, Token
 
 # Set the desired time zone
 os.environ['TZ'] = 'Europe/Moscow'

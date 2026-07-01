@@ -13,8 +13,11 @@ COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system --deploy
 
 # Copy application code
-COPY . .
+COPY auth_service /app/auth_service
 
+WORKDIR /app/auth_service
+
+RUN alembic upgrade head
 # Run the application
-RUN ["alembic", "upgrade",  "head"]
-CMD ["python", "uvicorn",  "main:app", "--host 0.0.0.0",  "--port 8081"]
+WORKDIR /app
+CMD ["uvicorn",  "auth_service.main:app", "--host", "0.0.0.0",  "--port", "80"]

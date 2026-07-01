@@ -9,7 +9,7 @@ from sqlalchemy.exc import NoResultFound
 from pydantic import BaseModel, Field
 from typing import Annotated
 
-from .models import Record
+from timesheets_service.models import Record
 
 # Set the desired time zone
 os.environ['TZ'] = 'Europe/Moscow'
