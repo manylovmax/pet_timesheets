@@ -4,7 +4,7 @@ import bcrypt
 import re
 
 from datetime import datetime, timedelta
-from fastapi import FastAPI, status, Response
+from fastapi import FastAPI, status, Response, Header
 from sqlalchemy import create_engine, select, delete
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
@@ -198,8 +198,8 @@ async def logout(access_token: str):
   }
 
 
-@app.post("/check")
-async def check(access_token: str, response: Response):
+@app.post("/verify")
+async def check(response: Response, access_token: Annotated[str | None, Header()] = None):
   with Session(engine) as session:
     stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token, Token.expires > datetime.now())
     try:

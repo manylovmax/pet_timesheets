@@ -1,0 +1,10 @@
+services:
+  auth_service:
+    build: auth_service/
+
+  timesheets_service:
+    build: timesheets_service/
+
+  nginx:
+    build: nginx/
+    ports: 80:80

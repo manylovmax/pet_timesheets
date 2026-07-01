@@ -7,6 +7,7 @@ from alembic import context
 
 from pathlib import Path
 import sys
+
 # 1. Get the directory of the current script
 current_dir = Path(__file__).resolve().parent
 
@@ -17,9 +18,7 @@ target_parent_path = current_dir.parent.parent
 # 3. Cast to string and insert into sys.path
 sys.path.insert(0, str(target_parent_path))
 
-from data_service.models import Base
-
-
+from auth_service.models import OrmBase
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -33,7 +32,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = OrmBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
