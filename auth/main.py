@@ -264,3 +264,45 @@ async def refresh(refresh_token: str, response: Response):
     "success": False,
     "error": "Something went wrong.",
   }
+
+
+@app.get("/users")
+async def get_users():  
+  with Session(engine) as session:
+    stmt = select(User)
+    users = session.scalars(stmt).all()
+    mapped_users = [{
+      'id': user.id,
+      'email': user.email,
+      'fullname': user.fullname,
+    } for user in users]
+
+  return {
+    "success": True,
+    "data": mapped_users
+  }
+
+
+@app.get("/user")
+async def get_user(access_token: str):  
+  with Session(engine) as session:
+    stmt = select(Token).where(Token.value==access_token)
+    try:
+      token = session.scalars(stmt).one()
+    except NoResultFound:
+      return {
+        "success": False,
+        "error": "Wrong token.",
+      }
+    user = token.user
+
+    mapped_user = {
+      'id': user.id,
+      'email': user.email,
+      'fullname': user.fullname,
+    }
+
+  return {
+    "success": True,
+    "data": mapped_user,
+  }
