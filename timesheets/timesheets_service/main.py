@@ -18,7 +18,7 @@ time.tzset()
 
 app = FastAPI()
 engine = create_engine(
-    "sqlite:///sqlite.db", connect_args={"autocommit": False}
+    "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
 )
   
 
