@@ -1,10 +1,10 @@
 services:
   auth_service:
-    build: auth/
+    build: backend/auth/
     networks:
       - backend_net
   timesheets_service:
-    build: timesheets/
+    build: backend/timesheets/
     networks:
       - backend_net
   api_gateway:
