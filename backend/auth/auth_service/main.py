@@ -63,14 +63,6 @@ class SignupBody(BaseModel):
   fullname: Annotated[str, Field(min_length=3), BeforeValidator(truncate)]
   email: Annotated[str, Field(min_length=EMAIL_MIN_LENGTH), AfterValidator(no_whitespace), AfterValidator(check_email)]
   password: Annotated[str, Field(min_length=PASSWORD_MIN_LENGTH), AfterValidator(no_whitespace)]
-  password_repeat: Annotated[str, Field(min_length=PASSWORD_MIN_LENGTH), AfterValidator(no_whitespace)]
-
-  @model_validator(mode='after')
-  def compare_passwords(self) -> Self:
-    if self.password != self.password_repeat:
-      raise ValueError(f'password is not equal to password_repeat.')
-    
-    return self
   
 
 class LoginBody(BaseModel):
