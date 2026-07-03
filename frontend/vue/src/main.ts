@@ -11,5 +11,5 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-app.provide('authService', new AuthService());
+app.provide('AuthService', new AuthService());
 app.mount('#app')

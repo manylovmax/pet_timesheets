@@ -6,7 +6,7 @@ import type AuthService from '@/services/auth.service.ts';
 
 const email = ref();
 const password = ref();
-const authService: AuthService | undefined = inject('authService');
+const authService: AuthService | undefined = inject('AuthService');
 
 async function login() {
   if (authService !== undefined) {
@@ -17,7 +17,7 @@ async function login() {
       console.error('Ошибка логина');
     }
   } else {
-    console.error('Ошибка инъектирования authService');
+    console.error('Ошибка инъектирования AuthService');
   }
 }
 </script>
