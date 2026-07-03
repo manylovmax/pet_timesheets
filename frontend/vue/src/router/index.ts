@@ -3,10 +3,17 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import UnauthorizedLayout from '@/layouts/UnauthorizedLayout.vue';
 import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
-import { createRouter, createWebHistory, type RouteLocationMatched } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+import AuthService from '@/services/auth.service';
+
+const authService = new AuthService();
 
 async function isAuthethicated(): Promise<boolean> {
-  
+  const accessToken = localStorage.get('access-token');
+  if (accessToken)
+    return await authService.verify(accessToken)
+
+  return false;
 }
 
 
