@@ -5,11 +5,12 @@ import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthService from '@/services/auth.service';
+import config from '@/constants';
 
 const authService = new AuthService();
 
 async function isAuthethicated(): Promise<boolean> {
-  const accessToken = localStorage.get('access-token');
+  const accessToken = localStorage.get(config.constants.accessTokenLSKey);
   if (accessToken)
     return await authService.verify(accessToken)
 

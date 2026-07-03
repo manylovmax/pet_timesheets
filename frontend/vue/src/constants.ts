@@ -13,6 +13,10 @@ const config = {
     user: apiHost + authBase + 'user',
     record: apiHost + timesheetsBase + 'record',
     records: apiHost + timesheetsBase + 'records',
+  },
+  constants: {
+    accessTokenLSKey: 'access-token',
+    refreshTokenLSKey: 'refresh-token'
   }
 };
 

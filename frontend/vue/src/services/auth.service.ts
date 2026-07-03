@@ -13,8 +13,8 @@ export class AuthService {
     });
 
     if (result?.data?.success) {
-      localStorage.set('access_token', result?.data?.access_token);
-      localStorage.set('refresh_token', result?.data?.refresh_token);
+      localStorage.set(config.constants.accessTokenLSKey, result?.data?.access_token);
+      localStorage.set(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
       return true
     };
 
