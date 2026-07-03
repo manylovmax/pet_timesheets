@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import axios, {AxiosError} from 'axios';
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import InputComponent from './InputComponent.vue';
-import config from '@/constants.ts';
 import router from '@/router/index.ts';
+import type AuthService from '@/services/auth.service.ts';
 
 const email = ref();
 const password = ref();
+const authService: AuthService | undefined = inject('authService');
+
 async function login() {
-  await axios.post(config.api.login, {
-    email: email.value,
-    password: password.value,
-  })
-    .catch((error: AxiosError) => {
-      console.log('Ошибка логина ' + error.message)
-    })
-    .then(() => {
-      router.push('/records')
-    });
+  if (authService !== undefined) {
+    const result = await authService.login(password.value, email.value);
+    if (result) {
+      router.push('/records');
+    } else {
+      console.error('Ошибка логина');
+    }
+  } else {
+    console.error('Ошибка инъектирования authService');
+  }
 }
 </script>
 <template>

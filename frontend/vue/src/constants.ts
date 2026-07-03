@@ -5,6 +5,7 @@ const timesheetsBase = 'api/v1/timesheets/';
 const config = {
   api: {
     login: apiHost + authBase + 'login',
+    verify: apiHost + authBase + 'verify',
     signup: apiHost + authBase + 'signup',
     logout: apiHost + authBase + 'logout',
     refresh: apiHost + authBase + 'refresh',
