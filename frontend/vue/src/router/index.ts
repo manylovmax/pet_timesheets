@@ -2,24 +2,21 @@ import axios from 'axios';
 import MainLayout from '@/layouts/MainLayout.vue';
 import UnauthorizedLayout from '@/layouts/UnauthorizedLayout.vue';
 import HomePage from '@/pages/HomePage.vue';
-import LoginPage from '@/pages/LoginPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthService from '@/services/auth.service';
 import config from '@/constants';
+import SigninPage from '@/pages/SigninPage.vue';
+import SignupPage from '@/pages/SignupPage.vue';
 
 const authService = new AuthService();
 
 async function isAuthethicated(): Promise<boolean> {
-  const accessToken = localStorage.get(config.constants.accessTokenLSKey);
-  if (accessToken)
-    return await authService.verify(accessToken)
-
-  return false;
+  return await authService.verify();
 }
 
 
 async function authGuard() {
-  if (!await isAuthethicated()) return '/login';
+  if (!await isAuthethicated()) return '/signin';
 }
 
 const routes = [
@@ -30,10 +27,15 @@ const routes = [
     beforeEnter: [authGuard]
   },
   {
-    path: '/login',
-    component: LoginPage,
+    path: '/signin',
+    component: SigninPage,
     meta: { layout: UnauthorizedLayout }
-  }
+  },
+  {
+    path: '/signup',
+    component: SignupPage,
+    meta: { layout: UnauthorizedLayout }
+  },
 ]
 
 const router = createRouter({

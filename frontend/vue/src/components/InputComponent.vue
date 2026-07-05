@@ -10,9 +10,12 @@ const id = uuidv4();
 const value = defineModel('value');
 </script>
 <template>
-  <div>
-    <label :for="id">{{ props.label || '' }}</label>
+  <div class="flex flex-col">
+    <label
+      class="pl-2" 
+      :for="id">{{ props.label || '' }}</label>
     <input 
+      class="bg-white rounded-2xl px-2"
       :id="id"
       :type="props.type"
       v-model="value"

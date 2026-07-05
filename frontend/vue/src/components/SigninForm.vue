@@ -11,29 +11,36 @@ const password = ref('');
 
 async function login() {
   if (authService !== undefined) {
-    console.log('password, email', password.value, email.value);
-    const result = await authService.login(password.value, email.value);
+    const result = await authService.signin(password.value, email.value);
     if (result) {
       router.push('/records');
-    } else {
-      console.error('Ошибка логина');
     }
   } else {
-    console.error('Ошибка инъектирования AuthService');
+    console.error('AuthService injecting error');
   }
 }
 </script>
 <template>
-  <div class="bg-gray-400 rounded-2xl py-16 px-4 flex flex-col gap-4">
-    <div>Авторизация</div>
+  <div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
+    <div>Sign in</div>
     <input-component 
       type="email"
+      label="Email"
       v-model:value="email"
     />
     <input-component 
+      label="Password"
       type="password" 
       v-model:value="password"
     />
-    <button @click="login()">Login</button>
+    <button 
+      class="bg-green-300 rounded-2xl px-2 uppercase"
+      @click="login()"
+    >submit</button>
+    <RouterLink 
+      class="underline"
+      to="/signup">
+      Signup
+    </RouterLink>
   </div>
 </template>

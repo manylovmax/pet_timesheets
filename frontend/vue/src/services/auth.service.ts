@@ -7,28 +7,62 @@ export interface Tokens {
 }
 
 export class AuthService {
-  async login(password: string, email: string): Promise<boolean> {
+  async signin(password: string, email: string): Promise<boolean> {
     const result = await axios.post(config.api.login, {email, password}).catch((error: AxiosError) => {
-      console.error('Ошибка логина ' + error.message);
+      console.error('Signin error: ' + error.message);
     });
 
     if (result?.data?.success) {
-      localStorage.set(config.constants.accessTokenLSKey, result?.data?.access_token);
-      localStorage.set(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
+      localStorage.setItem(config.constants.accessTokenLSKey, result?.data?.access_token);
+      localStorage.setItem(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
       return true
     };
+
+    if (result?.data?.error) {
+      alert(result?.data?.error);
+    }
 
     return false;
   }
 
-  async verify(accessToken: string): Promise<boolean> {
+  async verify(): Promise<boolean> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     try {
-      const result = await axios.post(config.api.verify, {'access-token': accessToken});
+      const result = await axios.post(config.api.verify, undefined, 
+        {
+          headers: {
+            'access-token': accessToken,
+            'Content-Type': 'application/json'
+          }
+      });
       if (result?.status == 200) {
         return true;
       };
     } catch (error: unknown) {
-      console.log('Ошибка логина ' + `${error}`);
+      console.log('Verify error: ' + `${error}`);
+    }
+
+    return false;
+  }
+
+
+  async signup(props: {
+    password: string, 
+    email: string,
+    fullname: string,
+  }): Promise<boolean> {
+    const result = await axios.post(config.api.signup, props).catch((error: AxiosError) => {
+      console.error('Signup error: ' + error.message);
+    });
+
+    if (result?.data?.success) {
+      localStorage.setItem(config.constants.accessTokenLSKey, result?.data?.access_token);
+      localStorage.setItem(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
+      return true
+    };
+
+    if (result?.data?.error) {
+      alert(result?.data?.error);
     }
 
     return false;
