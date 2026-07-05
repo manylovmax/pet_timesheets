@@ -4,9 +4,10 @@ import InputComponent from './InputComponent.vue';
 import router from '@/router/index.ts';
 import type AuthService from '@/services/auth.service.ts';
 
-const email = ref();
-const password = ref();
 const authService: AuthService | undefined = inject('AuthService');
+
+const email = ref('');
+const password = ref('');
 
 async function login() {
   if (authService !== undefined) {
@@ -27,11 +28,11 @@ async function login() {
     <div>Авторизация</div>
     <input-component 
       type="email"
-      v-model="email"
+      v-model:value="email"
     />
     <input-component 
       type="password" 
-      v-model="password"
+      v-model:value="password"
     />
     <button @click="login()">Login</button>
   </div>

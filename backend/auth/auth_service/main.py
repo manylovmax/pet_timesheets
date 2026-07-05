@@ -25,12 +25,16 @@ email_pattern = re.compile("^[\w\d]+@[\w\d]+\.[\w\d]{2,}$")
 
 EMAIL_MIN_LENGTH = 6
 PASSWORD_MIN_LENGTH = 8
-
+SUCCESS_FLAG_NAME = 'success'
+MESSAGE_NAME = 'message'
+TOKEN_ACCESS_NAME = 'acces_token'
+TOKEN_REFRESH_NAME = 'refresh_token'
 
 class TokenType(Enum):
   access = 'access'
   refresh = 'refresh'
   reset = 'reset'
+
 
 
 app = FastAPI()
@@ -106,8 +110,8 @@ async def signup(form: SignupBody):
 
   if not unique_email:
     return {
-      "success": False,
-      "error": "Email is occupied. Try different one."
+      SUCCESS_FLAG_NAME: False,
+      MESSAGE_NAME: "Email is occupied. Try different one."
     }
   
   with Session(engine) as session:
@@ -127,9 +131,9 @@ async def signup(form: SignupBody):
 
 
   return {
-    "success": True,
-    "access_token": access_token,
-    "refresh_token": refresh_token,  
+    SUCCESS_FLAG_NAME: True,
+    TOKEN_ACCESS_NAME: access_token,
+    TOKEN_REFRESH_NAME: refresh_token,  
   }
 
 
@@ -143,14 +147,14 @@ async def login(form: LoginBody):
       user = session.scalars(stmt).one()
     except NoResultFound:
       return {
-        "success": False,
-        "error": "Wrong email or password.",
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong email or password.",
       }
   
   if (not check_password(login_dict.password, user.password_hash.encode('utf-8'))):
     return {
-      "success": False,
-      "error": "Wrong email or password.",
+      SUCCESS_FLAG_NAME: False,
+      MESSAGE_NAME: "Wrong email or password.",
     }
   
   with Session(engine) as session:
@@ -170,9 +174,9 @@ async def login(form: LoginBody):
     session.commit()
 
   return {
-    "success": True,
-    "access_token": access_token,
-    "refresh_token": refresh_token,  
+    SUCCESS_FLAG_NAME: True,
+    TOKEN_ACCESS_NAME: access_token,
+    TOKEN_REFRESH_NAME: refresh_token,  
   }
 
 
@@ -184,8 +188,8 @@ async def logout(access_token: str):
       token = session.scalars(stmt).one()
     except NoResultFound:
       return {
-        "success": False,
-        "error": "Wrong token.",
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong token.",
       }
 
     if token:  
@@ -193,12 +197,12 @@ async def logout(access_token: str):
       session.commit()
 
       return {
-        "success": True
+        SUCCESS_FLAG_NAME: True
       }
     
   return {
-    "success": False,
-    "error": "Something went wrong."
+    SUCCESS_FLAG_NAME: False,
+    MESSAGE_NAME: "Something went wrong."
   }
 
 
@@ -211,19 +215,19 @@ async def check(response: Response, access_token: Annotated[str | None, Header()
     except NoResultFound:
       response.status_code = status.HTTP_403_FORBIDDEN
       return {
-        "success": False,
-        "error": "Wrong token.",
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong token.",
       }
 
   if token:
     return {
-      "success": True,
+      SUCCESS_FLAG_NAME: True,
     }
     
   response.status_code = status.HTTP_403_FORBIDDEN
   return {
-    "success": False,
-    "error": "Something went wrong.",
+    SUCCESS_FLAG_NAME: False,
+    MESSAGE_NAME: "Something went wrong.",
   }
 
 
@@ -236,8 +240,8 @@ async def refresh(refresh_token: str, response: Response):
     except NoResultFound:
       response.status_code = status.HTTP_403_FORBIDDEN
       return {
-        "success": False,
-        "error": "Wrong token.",
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong token.",
       }
 
   if token:
@@ -258,15 +262,15 @@ async def refresh(refresh_token: str, response: Response):
       session.commit()
 
     return {
-      "success": True,
-      "access_token": access_token,
-      "refresh_token": refresh_token, 
+      SUCCESS_FLAG_NAME: True,
+      TOKEN_ACCESS_NAME: access_token,
+      TOKEN_REFRESH_NAME: refresh_token, 
     }
     
   response.status_code = status.HTTP_403_FORBIDDEN
   return {
-    "success": False,
-    "error": "Something went wrong.",
+    SUCCESS_FLAG_NAME: False,
+    MESSAGE_NAME: "Something went wrong.",
   }
 
 
@@ -282,7 +286,7 @@ async def get_users():
     } for user in users]
 
   return {
-    "success": True,
+    SUCCESS_FLAG_NAME: True,
     "data": mapped_users
   }
 
@@ -295,8 +299,8 @@ async def get_user(access_token: str):
       token = session.scalars(stmt).one()
     except NoResultFound:
       return {
-        "success": False,
-        "error": "Wrong token.",
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong token.",
       }
     user = token.user
 
@@ -307,6 +311,6 @@ async def get_user(access_token: str):
     }
 
   return {
-    "success": True,
+    SUCCESS_FLAG_NAME: True,
     "data": mapped_user,
   }
