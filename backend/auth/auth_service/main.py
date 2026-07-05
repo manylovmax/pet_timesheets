@@ -5,6 +5,7 @@ import re
 
 from datetime import datetime, timedelta
 from fastapi import FastAPI, status, Response, Header
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select, delete
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
@@ -33,6 +34,17 @@ class TokenType(Enum):
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+      # 'http://api_gateway:80',
+      'http://localhost:8081'
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 engine = create_engine(
     "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
 )
