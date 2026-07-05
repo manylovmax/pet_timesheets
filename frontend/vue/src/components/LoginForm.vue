@@ -10,6 +10,7 @@ const authService: AuthService | undefined = inject('AuthService');
 
 async function login() {
   if (authService !== undefined) {
+    console.log('password, email', password.value, email.value);
     const result = await authService.login(password.value, email.value);
     if (result) {
       router.push('/records');

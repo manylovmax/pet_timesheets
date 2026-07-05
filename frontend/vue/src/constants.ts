@@ -1,4 +1,4 @@
-const apiHost = 'http://api_gateway/';
+const apiHost = 'http://api_gateway:8080/';
 const authBase = 'api/v1/auth/';
 const timesheetsBase = 'api/v1/timesheets/';
 

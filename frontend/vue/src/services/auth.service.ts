@@ -9,7 +9,7 @@ export interface Tokens {
 export class AuthService {
   async login(password: string, email: string): Promise<boolean> {
     const result = await axios.post(config.api.login, {email, password}).catch((error: AxiosError) => {
-      console.log('Ошибка логина ' + error.message);
+      console.error('Ошибка логина ' + error.message);
     });
 
     if (result?.data?.success) {
