@@ -8,7 +8,7 @@ from fastapi import FastAPI, status, Response, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select, delete
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy import exc
 from pydantic import BaseModel, Field, BeforeValidator, AfterValidator, model_validator
 from typing import Annotated
 from typing_extensions import Self
@@ -105,7 +105,7 @@ async def signup(form: SignupBody):
     stmt = select(User).where(User.email == user_dict.email)
     try:
       user = session.scalars(stmt).one()
-    except NoResultFound:
+    except exc.NoResultFound:
       unique_email = True
 
   if not unique_email:
@@ -186,7 +186,7 @@ async def logout(access_token: str):
     stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token)
     try:
       token = session.scalars(stmt).one()
-    except NoResultFound:
+    except exc.NoResultFound:
       return {
         SUCCESS_FLAG_NAME: False,
         MESSAGE_NAME: "Wrong token.",
@@ -206,42 +206,43 @@ async def logout(access_token: str):
   }
 
 
-@app.post("/verify")
-async def check(response: Response, access_token: Annotated[str | None, Header()] = None):
+def get_access_token(access_token: str) -> Token | None:
+  token = None
   with Session(engine) as session:
-    stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token, Token.expires > datetime.now())
+    stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token, Token.expires >= datetime.now())
     try:
       token = session.scalars(stmt).one()
-    except NoResultFound:
-      response.status_code = status.HTTP_403_FORBIDDEN
-      return {
-        SUCCESS_FLAG_NAME: False,
-        MESSAGE_NAME: "Wrong token.",
-      }
+    except exc.NoResultFound:
+      pass
 
-  if token:
+  return token
+
+@app.post("/verify")
+async def verify(response: Response, access_token: Annotated[str | None, Header()] = None):
+  token = get_access_token(access_token)
+  if not token:
+    response.status_code = status.HTTP_403_FORBIDDEN
     return {
-      SUCCESS_FLAG_NAME: True,
+      SUCCESS_FLAG_NAME: False,
+      MESSAGE_NAME: "Wrong access token or access token expired",
     }
-    
-  response.status_code = status.HTTP_403_FORBIDDEN
+
   return {
-    SUCCESS_FLAG_NAME: False,
-    MESSAGE_NAME: "Something went wrong.",
+    SUCCESS_FLAG_NAME: True,
   }
 
 
 @app.post("/refresh")
 async def refresh(refresh_token: str, response: Response):
   with Session(engine) as session:
-    stmt = select(Token).where(Token.type == TokenType.refresh.value, Token.value == refresh_token, Token.expires > datetime.now())
+    stmt = select(Token).where(Token.type == TokenType.refresh.value, Token.value == refresh_token, Token.expires >= datetime.now())
     try:
       token = session.scalars(stmt).one()
-    except NoResultFound:
+    except exc.NoResultFound:
       response.status_code = status.HTTP_403_FORBIDDEN
       return {
         SUCCESS_FLAG_NAME: False,
-        MESSAGE_NAME: "Wrong token.",
+        MESSAGE_NAME: "Wrong refresh token or refresh token expired",
       }
 
   if token:
@@ -275,7 +276,15 @@ async def refresh(refresh_token: str, response: Response):
 
 
 @app.get("/users")
-async def get_users():  
+async def get_users(response: Response, access_token: Annotated[str | None, Header()] = None):
+  token = get_access_token(access_token)
+  if not token:
+    response.status_code = status.HTTP_403_FORBIDDEN
+    return {
+      SUCCESS_FLAG_NAME: False,
+      MESSAGE_NAME: "Wrong access token or access token expired.",
+    }
+  
   with Session(engine) as session:
     stmt = select(User)
     users = session.scalars(stmt).all()
@@ -291,24 +300,22 @@ async def get_users():
   }
 
 
-@app.get("/user")
-async def get_user(access_token: str):  
-  with Session(engine) as session:
-    stmt = select(Token).where(Token.value==access_token)
-    try:
-      token = session.scalars(stmt).one()
-    except NoResultFound:
-      return {
-        SUCCESS_FLAG_NAME: False,
-        MESSAGE_NAME: "Wrong token.",
-      }
-    user = token.user
-
-    mapped_user = {
-      'id': user.id,
-      'email': user.email,
-      'fullname': user.fullname,
+@app.get("/self")
+async def get_self(response: Response, access_token: Annotated[str | None, Header()] = None):
+  token = get_access_token(access_token)
+  if not token:
+    response.status_code = status.HTTP_403_FORBIDDEN
+    return {
+      SUCCESS_FLAG_NAME: False,
+      MESSAGE_NAME: "Wrong access token or access token expired.",
     }
+  
+  user = token.user
+  mapped_user = {
+    'id': user.id,
+    'email': user.email,
+    'fullname': user.fullname,
+  }
 
   return {
     SUCCESS_FLAG_NAME: True,
