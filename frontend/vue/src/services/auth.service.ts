@@ -1,5 +1,5 @@
 import config from "@/constants";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 // Prevent Axios from throwing errors globally
 axios.defaults.validateStatus = () => true;
