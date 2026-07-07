@@ -9,6 +9,13 @@ export interface Tokens {
   refresh: string
 }
 
+export interface User {
+  id: number,
+  email: string,
+  fullname: string,
+}
+
+
 export class AuthService {
   async signin(password: string, email: string): Promise<boolean> {
     const result = await axios.post(config.api.login, {email, password});
@@ -43,7 +50,6 @@ export class AuthService {
 
     return false;
   }
-
 
   async signup(props: {
     password: string, 
@@ -81,6 +87,24 @@ export class AuthService {
     }
 
     return false;
+  }
+
+  async self(): Promise<User | null> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+      const result = await axios.get(config.api.self, 
+        {
+          headers: {
+            'access-token': accessToken,
+            'Content-Type': 'application/json'
+          }
+      });
+      if (result?.status == 200) {
+        return result?.data?.data;
+      } else {
+        alert(result?.data?.message);
+      }
+
+    return null;
   }
 }
 

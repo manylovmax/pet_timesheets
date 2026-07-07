@@ -3,6 +3,7 @@ import { inject, ref } from 'vue'
 import InputComponent from './InputComponent.vue';
 import type AuthService from '@/services/auth.service.ts';
 import { useRouter } from 'vue-router';
+import config from '@/constants.ts';
 
 const router = useRouter();
 const authService: AuthService | undefined = inject('AuthService');
@@ -20,6 +21,9 @@ async function signup() {
       fullname: fullname.value, 
     });
     if (result) {
+      const user = await authService.self();
+      if (user)
+        localStorage.setItem(config.constants.userIdLSKey, user.id.toString());
       router.push('/records');
     }
   } else {
