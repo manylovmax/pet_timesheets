@@ -27,7 +27,7 @@ export class AuthService {
   async verify(): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     try {
-      const result = await axios.post(config.api.verify, undefined, 
+      const result = await axios.get(config.api.verify, 
         {
           headers: {
             'access-token': accessToken,
