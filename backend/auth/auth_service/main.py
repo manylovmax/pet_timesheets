@@ -39,18 +39,18 @@ class TokenType(Enum):
 
 app = FastAPI()
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-      # 'http://api_gateway:80',
-      'http://localhost:8081'
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+  CORSMiddleware,
+  allow_origins=[
+    # change to frontend server host
+    'http://localhost:8081'
+  ],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"],
 )
 
 engine = create_engine(
-    "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
 )
 
 
@@ -222,7 +222,7 @@ def get_access_token(access_token: str) -> Token | None:
 
   return token
 
-@app.post("/verify")
+@app.get("/verify")
 async def verify(response: Response, access_token: Annotated[str | None, Header()] = None):
   token = get_access_token(access_token)
   if not token:
