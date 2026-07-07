@@ -104,15 +104,10 @@ async def update_record(body: RecordUpdate):
 
 
 @app.get("/records")
-async def get_records(user_id: Annotated[int, Field(gt=0)]):  
+async def get_records(userId: Annotated[int, Field(gt=0)]):  
   with Session(engine) as session:
-    stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False)
+    stmt = select(Record).where(Record.user_id == userId, Record.deleted == False)
     records = session.scalars(stmt).all()
-    if not records.count:
-      return {
-        "success": False,
-        "error": "Wrong record_id or user_id.",
-      }
 
   return {
     "success": True,
