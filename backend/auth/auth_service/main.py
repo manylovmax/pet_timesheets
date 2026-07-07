@@ -9,9 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select, delete
 from sqlalchemy.orm import Session
 from sqlalchemy import exc
-from pydantic import BaseModel, Field, BeforeValidator, AfterValidator, model_validator
+from pydantic import BaseModel, Field, BeforeValidator, AfterValidator
 from typing import Annotated
-from typing_extensions import Self
 from enum import Enum
 from uuid import uuid4
 
@@ -307,15 +306,19 @@ async def get_users(response: Response, access_token: Annotated[str | None, Head
 
 @app.get("/self")
 async def get_self(response: Response, access_token: Annotated[str | None, Header()] = None):
-  token = get_access_token(access_token)
-  if not token:
-    response.status_code = status.HTTP_403_FORBIDDEN
-    return {
-      SUCCESS_FLAG_NAME: False,
-      MESSAGE_NAME: "Wrong access token or access token expired.",
-    }
-  
-  user = token.user
+  token = None
+  with Session(engine) as session:
+    stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token, Token.expires >= datetime.now())
+    try:
+      token = session.scalars(stmt).one()
+    except exc.NoResultFound:
+      response.status_code = status.HTTP_403_FORBIDDEN
+      return {
+        SUCCESS_FLAG_NAME: False,
+        MESSAGE_NAME: "Wrong access token or access token expired.",
+      }
+
+    user = token.user
   mapped_user = {
     'id': user.id,
     'email': user.email,
