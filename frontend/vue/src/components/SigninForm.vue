@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
 import InputComponent from './InputComponent.vue';
-import router from '@/router/index.ts';
 import type AuthService from '@/services/auth.service.ts';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authService: AuthService | undefined = inject('AuthService');
 
 const email = ref('');
@@ -13,7 +14,9 @@ async function login() {
   if (authService !== undefined) {
     const result = await authService.signin(password.value, email.value);
     if (result) {
-      router.push('/records');
+      router.push('/');
+    } else {
+      alert('No user with such email and password found.')
     }
   } else {
     console.error('AuthService injecting error');

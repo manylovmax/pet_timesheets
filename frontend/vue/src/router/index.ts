@@ -1,12 +1,12 @@
 import axios from 'axios';
 import MainLayout from '@/layouts/MainLayout.vue';
 import UnauthorizedLayout from '@/layouts/UnauthorizedLayout.vue';
-import HomePage from '@/pages/HomePage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthService from '@/services/auth.service';
-import config from '@/constants';
 import SigninPage from '@/pages/SigninPage.vue';
 import SignupPage from '@/pages/SignupPage.vue';
+import RecordsPage from '@/pages/RecordsPage.vue';
+import RecordUpdate from '@/pages/RecordUpdate.vue';
 
 const authService = new AuthService();
 
@@ -21,8 +21,18 @@ async function authGuard() {
 
 const routes = [
   {
+    path: '/',
+    redirect: '/records',
+  },
+  {
     path: '/records',
-    component: HomePage,
+    component: RecordsPage,
+    meta: { layout: MainLayout },
+    beforeEnter: [authGuard]
+  },
+  {
+    path: '/record-update',
+    component: RecordUpdate,
     meta: { layout: MainLayout },
     beforeEnter: [authGuard]
   },
@@ -35,6 +45,10 @@ const routes = [
     path: '/signup',
     component: SignupPage,
     meta: { layout: UnauthorizedLayout }
+  },
+  {
+    path: '/:pathMatch(.*)',
+    redirect: '/records',
   },
 ]
 

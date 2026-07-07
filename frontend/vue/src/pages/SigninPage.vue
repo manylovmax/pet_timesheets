@@ -3,6 +3,6 @@ import SigninForm from '@/components/SigninForm.vue';
 </script>
 <template>
   <div class="grid place-items-center h-screen">
-    <SigninForm />
+    <signin-form />
   </div>
 </template>
