@@ -27,7 +27,7 @@ EMAIL_MIN_LENGTH = 6
 PASSWORD_MIN_LENGTH = 8
 SUCCESS_FLAG_NAME = 'success'
 MESSAGE_NAME = 'message'
-TOKEN_ACCESS_NAME = 'acces_token'
+TOKEN_ACCESS_NAME = 'access_token'
 TOKEN_REFRESH_NAME = 'refresh_token'
 
 class TokenType(Enum):
@@ -97,7 +97,7 @@ def generate_token():
 
 
 @app.post("/signup")
-async def signup(form: SignupBody):
+async def signup(response: Response, form: SignupBody):
   user_dict = form
 
   unique_email = False
@@ -109,6 +109,7 @@ async def signup(form: SignupBody):
       unique_email = True
 
   if not unique_email:
+    response.status_code = status.HTTP_400_BAD_REQUEST
     return {
       SUCCESS_FLAG_NAME: False,
       MESSAGE_NAME: "Email is occupied. Try different one."
@@ -138,20 +139,22 @@ async def signup(form: SignupBody):
 
 
 @app.post("/login")
-async def login(form: LoginBody):
+async def login(response: Response, form: LoginBody):
   login_dict = form
 
   with Session(engine) as session:
     stmt = select(User).where(User.email == login_dict.email)
     try:
       user = session.scalars(stmt).one()
-    except NoResultFound:
+    except exc.NoResultFound:
+      response.status_code = status.HTTP_404_NOT_FOUND
       return {
         SUCCESS_FLAG_NAME: False,
         MESSAGE_NAME: "Wrong email or password.",
       }
   
   if (not check_password(login_dict.password, user.password_hash.encode('utf-8'))):
+    response.status_code = status.HTTP_404_NOT_FOUND
     return {
       SUCCESS_FLAG_NAME: False,
       MESSAGE_NAME: "Wrong email or password.",
@@ -181,15 +184,16 @@ async def login(form: LoginBody):
 
 
 @app.post("/logout")
-async def logout(access_token: str):
+async def logout(response: Response, access_token: Annotated[str | None, Header()] = None):
   with Session(engine) as session:
     stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token)
     try:
       token = session.scalars(stmt).one()
     except exc.NoResultFound:
+      response.status_code = status.HTTP_404_NOT_FOUND
       return {
         SUCCESS_FLAG_NAME: False,
-        MESSAGE_NAME: "Wrong token.",
+        MESSAGE_NAME: "Wrong access token.",
       }
 
     if token:  
@@ -200,6 +204,7 @@ async def logout(access_token: str):
         SUCCESS_FLAG_NAME: True
       }
     
+  response.status_code = status.HTTP_400_BAD_REQUEST
   return {
     SUCCESS_FLAG_NAME: False,
     MESSAGE_NAME: "Something went wrong."
