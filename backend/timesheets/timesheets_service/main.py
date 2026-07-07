@@ -19,17 +19,17 @@ time.tzset()
 
 app = FastAPI()
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-      # 'http://api_gateway:80',
-      'http://localhost:8081'
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+  CORSMiddleware,
+  allow_origins=[
+    # change to frontend server host
+    'http://localhost:8081'
+  ],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"],
 )
 engine = create_engine(
-    "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
 )
   
 
