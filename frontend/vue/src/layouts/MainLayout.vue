@@ -4,8 +4,8 @@ import HeaderMenu from '@/components/HeaderMenu.vue';
 
 </script>
 <template>
+  <header-menu />
   <main>
-    <header-menu />
-    <slot />
+    <slot></slot>
   </main>
 </template>

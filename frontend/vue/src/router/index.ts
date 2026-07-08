@@ -27,24 +27,25 @@ const routes = [
   {
     path: '/records',
     component: RecordsPage,
-    meta: { layout: MainLayout },
     beforeEnter: [authGuard]
   },
   {
-    path: '/record-update',
+    path: '/record-update/:id',
     component: RecordUpdate,
-    meta: { layout: MainLayout },
+    beforeEnter: [authGuard]
+  },
+  {
+    path: '/record-create',
+    component: RecordUpdate,
     beforeEnter: [authGuard]
   },
   {
     path: '/signin',
     component: SigninPage,
-    meta: { layout: UnauthorizedLayout }
   },
   {
     path: '/signup',
     component: SignupPage,
-    meta: { layout: UnauthorizedLayout }
   },
   {
     path: '/:pathMatch(.*)',
