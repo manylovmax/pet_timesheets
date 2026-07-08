@@ -45,7 +45,7 @@ export class AuthService {
         return true;
       };
     } catch (error: unknown) {
-      console.log('Verify error: ' + `${error}`);
+      console.error('Verify error: ' + `${error}`);
     }
 
     return false;
