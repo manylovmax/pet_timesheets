@@ -1,14 +1,41 @@
 <script setup lang="ts">
+import TableComponent, { type TableColumn } from '@/components/TableComponent.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
-// import RecordsService from '@/services/records.service';
+import RecordsService from '@/services/records.service';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-// const recordsService = new RecordsService();
-// const records = await recordsService.getAllRecords();
+const recordsService = new RecordsService();
+
 function goToCreate() {
   router.push('/record-create');
 }
+
+const columns: Array<TableColumn> = [
+  {
+    label: 'ID',
+    attribute: 'id',
+  },
+  {
+    label: 'User ID',
+    attribute: 'user_id',
+  },
+  {
+    label: 'Date',
+    attribute: 'date',
+  },
+  {
+    label: 'Minutes',
+    attribute: 'minutes',
+  },
+];
+const records = (await recordsService.getAllRecords()).map(r => ({
+  'id': `${r.id}`,
+  'user_id': `${r.user_id}`,
+  'date': r.date,
+  'minutes': `${r.minutes}`,
+}));
+// const records = [{'id': '1', 'user_id': '1', 'date': '2026-07-09', 'minutes': '1'}];
 </script>
 <template>
   <main-layout>
@@ -18,6 +45,7 @@ function goToCreate() {
           @click="goToCreate()"
         >Create</div>
       </div>
+      <table-component :columns="columns" :rows="records"/>
     </div>
   </main-layout>
 </template>
