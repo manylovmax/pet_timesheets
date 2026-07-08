@@ -25,7 +25,6 @@ export class RecordsService {
         'Content-Type': 'application/json'
       }
     });
-    console.log('result', result);
 
     if (result?.data?.success) {
       return result?.data?.data;
