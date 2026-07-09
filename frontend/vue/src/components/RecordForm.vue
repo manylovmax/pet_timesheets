@@ -8,7 +8,7 @@ const props = defineProps<Props>();
 
 const dateModel = defineModel('date');
 const minutesModel = defineModel('minutes');
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['submit']);
 </script>
 <template>
   <div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
