@@ -15,18 +15,23 @@ const columns: Array<TableColumn> = [
   {
     label: 'ID',
     attribute: 'id',
-  },
-  {
-    label: 'User ID',
-    attribute: 'user_id',
+    type: 'attribute',
   },
   {
     label: 'Date',
     attribute: 'date',
+    type: 'attribute',
   },
   {
     label: 'Minutes',
     attribute: 'minutes',
+    type: 'attribute',
+  },
+  {
+    label: 'Actions',
+    attribute: 'actions',
+    type: 'actions',
+    actions: ['update', 'delete'],
   },
 ];
 const records = (await recordsService.getAllRecords()).map(r => ({
@@ -35,7 +40,16 @@ const records = (await recordsService.getAllRecords()).map(r => ({
   'date': r.date,
   'minutes': `${r.minutes}`,
 }));
-// const records = [{'id': '1', 'user_id': '1', 'date': '2026-07-09', 'minutes': '1'}];
+
+async function deleteRecord(index: number) {
+  const recordId = records[index]?.id;
+  console.log('delete record', recordId)
+}
+
+function goToUpdatePage(index: number) {
+  const recordId = records[index]?.id;
+  router.push('/record-update/' + recordId);
+}
 </script>
 <template>
   <main-layout>
@@ -45,7 +59,12 @@ const records = (await recordsService.getAllRecords()).map(r => ({
           @click="goToCreate()"
         >Create</div>
       </div>
-      <table-component :columns="columns" :rows="records"/>
+      <table-component 
+        :columns="columns"
+        :rows="records"
+        @update="goToUpdatePage"
+        @delete="deleteRecord"
+      />
     </div>
   </main-layout>
 </template>
