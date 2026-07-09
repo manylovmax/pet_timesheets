@@ -2,7 +2,7 @@
 </script>
 
 <template>
-<RouterView v-slot="{ Component }">
+<RouterView v-slot="{ Component }" :key="$route.fullPath">
   <template v-if="Component">
     <KeepAlive>
       <Suspense>

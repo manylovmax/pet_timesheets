@@ -2,7 +2,7 @@
 import {v4 as uuidv4} from 'uuid';
 
 interface Props {
-  type: 'text' | 'password' | 'email'
+  type: 'text' | 'password' | 'email' | 'number' | 'date',
   label?: string
 }
 const props = defineProps<Props>();

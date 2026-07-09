@@ -1,12 +1,10 @@
-import axios from 'axios';
-import MainLayout from '@/layouts/MainLayout.vue';
-import UnauthorizedLayout from '@/layouts/UnauthorizedLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import AuthService from '@/services/auth.service';
 import SigninPage from '@/pages/SigninPage.vue';
 import SignupPage from '@/pages/SignupPage.vue';
 import RecordsPage from '@/pages/RecordsPage.vue';
 import RecordUpdate from '@/pages/RecordUpdate.vue';
+import RecordCreate from '@/pages/RecordCreate.vue';
 
 const authService = new AuthService();
 
@@ -36,7 +34,7 @@ const routes = [
   },
   {
     path: '/record-create',
-    component: RecordUpdate,
+    component: RecordCreate,
     beforeEnter: [authGuard]
   },
   {

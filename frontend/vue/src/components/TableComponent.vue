@@ -7,7 +7,9 @@ interface Props {
 const props = defineProps<Props>();
 </script>
 <template>
-  <table v-if="props.columns.length">
+  <table 
+    class="rounded-2xl"
+    v-if="props.columns.length">
     <thead>
       <tr>
         <th scope="col" v-for="col in props.columns" :key="col.attribute">{{ col.label || ''}}</th>
@@ -25,3 +27,8 @@ const props = defineProps<Props>();
     </tbody>
   </table>
 </template>
+<style>
+th, td {
+  text-align: center;
+}
+</style>

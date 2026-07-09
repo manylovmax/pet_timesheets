@@ -35,6 +35,35 @@ export class RecordsService {
     return [];
   }
 
+  async createRecord(props: {
+    minutes: number,
+    date: string,
+  }): Promise<boolean> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const userId = localStorage.getItem(config.constants.userIdLSKey);
+    const result = await axios.post(config.api.record,
+      {
+        'user_id': userId,
+        'minutes': props.minutes,
+        'date': props.date,
+      },
+      {
+        headers: {
+          'access-token': accessToken,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!result?.data?.success && result?.status === 200) {
+      alert(result?.data?.message);
+    } else if (result?.status === 422) {
+      alert('Validation error');
+    }
+
+    return result?.data?.success;
+  }
+
 }
 
 
