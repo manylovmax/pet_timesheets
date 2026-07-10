@@ -15,23 +15,14 @@ const columns: Array<TableColumn> = [
   {
     label: 'ID',
     attribute: 'id',
-    type: 'attribute',
   },
   {
     label: 'Date',
     attribute: 'date',
-    type: 'attribute',
   },
   {
     label: 'Minutes',
     attribute: 'minutes',
-    type: 'attribute',
-  },
-  {
-    label: 'Actions',
-    attribute: 'actions',
-    type: 'actions',
-    actions: ['update', 'delete'],
   },
 ];
 const records = (await recordsService.getAllRecords()).map(r => ({
@@ -62,6 +53,8 @@ function goToUpdatePage(index: number) {
       <table-component 
         :columns="columns"
         :rows="records"
+        :delete-button="true"
+        :update-button="true"
         @update="goToUpdatePage"
         @delete="deleteRecord"
       />

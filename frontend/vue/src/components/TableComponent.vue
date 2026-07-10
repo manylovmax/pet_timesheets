@@ -4,12 +4,12 @@ import { Pencil, Trash } from '@lucide/vue';
 export interface TableColumn {
   label: string, 
   attribute: string,
-  type: 'attribute' | 'actions',
-  actions?: string[],
 };
 interface Props {
   columns: Array<TableColumn>,
   rows: Array<Record<string, string>>,
+  deleteButton: boolean,
+  updateButton: boolean,
 };
 const props = defineProps<Props>();
 const emit = defineEmits(['delete', 'update']);
@@ -20,26 +20,29 @@ const emit = defineEmits(['delete', 'update']);
     v-if="props.columns.length">
     <thead>
       <tr>
-        <th scope="col" v-for="col in props.columns" :key="col.attribute">{{ col.type === 'actions' ? 'Actions' : col.label || ''}}</th>
+        <th scope="col" v-for="col in props.columns" :key="col.attribute">{{ col.label || ''}}</th>
+        <th scope="col" v-if="props.deleteButton || props.updateButton">Actions</th>
       </tr>
     </thead>
     <tbody v-if="props.rows.length" >
       <tr v-for="(row, index) in props.rows" :key="index">
         <td v-for="col in props.columns" :key="col.attribute">
-          <div v-if="col.type === 'actions'"
+           {{ row[col.attribute] || '' }}
+        </td>
+        <td v-if="props.updateButton || props.deleteButton">
+          <div
             class="flex gap-2 w-full justify-center">
             <Pencil 
               class="cursor-pointer"
-              v-if="col?.actions?.includes('update')"
+              v-if="props.updateButton"
               @click="emit('update', index)"  
-            />
+            />            
             <Trash 
               class="cursor-pointer"
-              v-if="col?.actions?.includes('delete')" 
+              v-if="props.deleteButton"
               @click="emit('delete', index)"
               />
           </div>
-          <div v-else>{{ row[col.attribute] || '' }}</div>
         </td>
       </tr>
     </tbody>
