@@ -95,7 +95,6 @@ async def update_record(body: RecordUpdate):
     
     record.date = body.date
     record.minutes = body.minutes
-    record.minutes = body.minutes
     session.commit()
 
   return {
