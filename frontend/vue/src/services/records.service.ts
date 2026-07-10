@@ -85,6 +85,56 @@ export class RecordsService {
     return result?.data?.success;
   }
 
+  async updateRecord(params: {
+    recordId: number,
+    minutes: number,
+    date: string,
+  }): Promise<boolean> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const userId = localStorage.getItem(config.constants.userIdLSKey);
+    const result = await axios.patch(config.api.record, 
+      {
+        record_id: params.recordId,
+        user_id: userId,
+        minutes: params.minutes,
+        date: params.date,
+      },
+      {
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!result?.data?.success) 
+      alert(result?.data?.message);
+
+    return result?.data?.success;
+  }
+
+  async getRecord(recordId: number): Promise<TimesheetsRecord | null> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const userId = localStorage.getItem(config.constants.userIdLSKey);
+    const result = await axios.get(config.api.record, {
+      params: {
+        userId,
+        recordId,
+      },
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (result?.data?.success) {
+      return result?.data?.data;
+    } else {
+      alert(result?.data?.message);
+    }
+
+    return null;
+  }
+
 }
 
 
