@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from pydantic import BaseModel, Field
 from typing import Annotated
 
@@ -111,4 +111,22 @@ async def get_records(userId: Annotated[int, Field(gt=0)]):
   return {
     "success": True,
     "data": records
+  }
+
+
+@app.get("/record")
+async def get_record(userId: Annotated[int, Field(gt=0)], recordId: Annotated[int, Field(gt=0)]):  
+  with Session(engine) as session:
+    stmt = select(Record).where(Record.user_id == userId, Record.deleted == False, Record.id == recordId)
+    try: 
+      record = session.scalars(stmt).one()
+    except (NoResultFound, MultipleResultsFound):
+      return {
+        "success": False,
+        "message": "Wrong userId, recordId, or record is deleted."
+      }
+
+  return {
+    "success": True,
+    "data": record
   }
