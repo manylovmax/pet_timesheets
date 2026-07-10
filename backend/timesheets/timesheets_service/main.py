@@ -63,15 +63,15 @@ async def create_record(body: RecordCreate):
 
 
 @app.delete("/record")
-async def delete_record(record_id: int):
+async def delete_record(record_id: int, user_id: int):
   with Session(engine) as session:
-    stmt = select(Record).where(Record.id == record_id)
+    stmt = select(Record).where(Record.id == record_id, Record.user_id == user_id)
     try:
       record = session.scalars(stmt).one()
     except NoResultFound:
       return {
         "success": False,
-        "error": "Wrong record id.",
+        "message": "Wrong record_id or user_id.",
       }
     record.deleted = True
     session.commit()
@@ -90,7 +90,7 @@ async def update_record(body: RecordUpdate):
     except NoResultFound:
       return {
         "success": False,
-        "error": "Wrong record_id or user_id, or record deleted.",
+        "message": "Wrong record_id or user_id, or record deleted.",
       }
     
     record.date = body.date
