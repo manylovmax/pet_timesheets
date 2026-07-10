@@ -4,7 +4,7 @@ import axios from "axios";
 // Prevent Axios from throwing errors globally
 axios.defaults.validateStatus = () => true;
 
-interface TimesheetsRecord {
+export interface TimesheetsRecord {
   id: number,
   user_id: number,
   minutes: number,
@@ -60,6 +60,27 @@ export class RecordsService {
     } else if (result?.status === 422) {
       alert('Validation error');
     }
+
+    return result?.data?.success;
+  }
+
+
+  async deleteRecord(recordId: number): Promise<boolean> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const userId = localStorage.getItem(config.constants.userIdLSKey);
+    const result = await axios.delete(config.api.record, {
+      params: {
+        record_id: recordId,
+        user_id: userId,
+      },
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!result?.data?.success) 
+      alert(result?.data?.message);
 
     return result?.data?.success;
   }

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import TableComponent, { type TableColumn } from '@/components/TableComponent.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
-import RecordsService from '@/services/records.service';
+import RecordsService, { type TimesheetsRecord } from '@/services/records.service';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
 const router = useRouter();
 const recordsService = new RecordsService();
+const records = ref<Array<TimesheetsRecord>>([]);
+const mappedRecords = ref<Record<string, string>[]>([]);
 
 function goToCreate() {
   router.push('/record-create');
@@ -25,7 +28,8 @@ const columns: Array<TableColumn> = [
     attribute: 'minutes',
   },
 ];
-const records = (await recordsService.getAllRecords()).map(r => ({
+records.value = await recordsService.getAllRecords();
+mappedRecords.value = records.value.map(r => ({
   'id': `${r.id}`,
   'user_id': `${r.user_id}`,
   'date': r.date,
@@ -33,12 +37,23 @@ const records = (await recordsService.getAllRecords()).map(r => ({
 }));
 
 async function deleteRecord(index: number) {
-  const recordId = records[index]?.id;
-  console.log('delete record', recordId)
+  const recordId = records.value[index]?.id;
+  if (recordId) {
+    const result = await recordsService.deleteRecord(recordId);
+    if (result) {
+      records.value = await recordsService.getAllRecords();
+      mappedRecords.value = records.value.map(r => ({
+        'id': `${r.id}`,
+        'user_id': `${r.user_id}`,
+        'date': r.date,
+        'minutes': `${r.minutes}`,
+      }));
+    }
+  }
 }
 
 function goToUpdatePage(index: number) {
-  const recordId = records[index]?.id;
+  const recordId = records.value[index]?.id;
   router.push('/record-update/' + recordId);
 }
 </script>
@@ -52,7 +67,7 @@ function goToUpdatePage(index: number) {
       </div>
       <table-component 
         :columns="columns"
-        :rows="records"
+        :rows="mappedRecords"
         :delete-button="true"
         :update-button="true"
         @update="goToUpdatePage"
