@@ -1,0 +1,11 @@
+<div class="flex flex-col">
+  <label
+    class="pl-2" 
+    [for]="id">{{ label() || '' }}</label>
+  <input 
+    class="bg-white rounded-2xl px-2"
+    [id]="id"
+    [type]="type()"
+    (input)="onInput($event)"
+  >
+</div>
