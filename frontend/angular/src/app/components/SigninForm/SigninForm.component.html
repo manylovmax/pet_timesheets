@@ -3,12 +3,12 @@
   <InputComponent 
     type="email"
     label="Email"
-    (input)="email = $event"
+    [(value)]="email"
   />
   <InputComponent 
     label="Password"
     type="password" 
-    (input)="password = $event"
+    [(value)]="password"
   />
   <button 
     class="bg-green-300 rounded-2xl px-2 uppercase"
