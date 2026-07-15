@@ -1,0 +1,57 @@
+@if(columns().length) {
+<table class="rounded-2xl">
+    <thead>
+      <tr>
+        @for (col of columns(); track $index) {
+          <th scope="col">{{ col.label || ''}}</th>
+        }
+        @if(deleteButton() || updateButton()) {
+          <th scope="col">Actions</th>
+        }
+      </tr>
+    </thead>
+    @if (rows().length) {
+    <tbody>
+      @for(row of rows(); track $index) {
+      <tr>
+        @for (col of columns(); track col.attribute) {
+        <td>
+           {{ row[col.attribute] || '' }}
+        </td>
+        }
+        @if (updateButton() || deleteButton()) {
+        <td>
+          <div class="flex gap-2 w-full justify-center">
+            @if (updateButton()) {
+            <svg lucidePencil 
+              class="cursor-pointer" 
+              [size]="32" color="black" 
+              [strokeWidth]="1" 
+              title="Update"
+              (click)="onUpdate($index)"  
+            ></svg>  
+            }
+            @if (deleteButton()) {
+            <svg lucideTrash
+              class="cursor-pointer" 
+              [size]="32" color="black" 
+              [strokeWidth]="1" 
+              title="Update"
+              (click)="onDelete($index)"  
+            ></svg>
+            }       
+          </div>
+        </td>
+        }
+      </tr>
+      }
+    </tbody>
+    } @else {
+    <tbody>
+      <tr>
+        <td [colSpan]="columns().length">No data</td>
+      </tr>
+    </tbody>
+    }
+  </table>
+}
