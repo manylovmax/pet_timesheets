@@ -1,0 +1,10 @@
+<MainLayout>
+  <div class="grid place-items-center h-screen">
+    <RecordForm
+      [type]="'update'"
+      [minutes]="minutes"
+      [date]="date"
+      (submit)="onUpdate()"
+    />
+  </div>
+</MainLayout>

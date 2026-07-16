@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import AuthService from "../../services/auth.service";
-import  { LucideLogOut } from '@lucide/angular'
+import  { LucideLogOut } from '@lucide/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'HeaderMenu',
@@ -8,9 +9,11 @@ import  { LucideLogOut } from '@lucide/angular'
   imports: [LucideLogOut],
 })
 export class HeaderMenu {
+  private readonly router = inject(Router); 
   private readonly authService = inject(AuthService);
 
   async signout() {
-    await this.authService.signout();
+    if (await this.authService.signout())
+      this.router.navigate(['/signin'])
   }
 }

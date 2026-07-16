@@ -18,8 +18,7 @@ export class TableComponent {
   deleteButton = input<boolean>(false);
   updateButton = input<boolean>(false);
   update = output<number>(); 
-  delete = output<number>(); 
-
+  delete = output<number>();
 
   onUpdate(index: number) {
     this.update.emit(index);

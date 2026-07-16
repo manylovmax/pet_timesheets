@@ -1,7 +1,7 @@
 import { Component, inject, signal, Signal } from "@angular/core";
 import { InputComponent } from "../Input/Input.component";
 import AuthService from "../../services/auth.service";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   selector: 'SignupForm',
@@ -9,6 +9,7 @@ import { RouterLink } from "@angular/router";
   imports: [InputComponent, RouterLink],
 })
 export class SignupForm {
+  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   email = signal<string>('');
   password = signal<string>('');
@@ -16,10 +17,11 @@ export class SignupForm {
   fullname = signal<string>('');
 
   async signup(): Promise<void> {
-    this.authService.signup({
+    if (await this.authService.signup({
       password: this.password(), 
       email: this.email(),
       fullname: this.fullname(),
-    });
+    }))
+      this.router.navigate(['/records'])
   }
 }

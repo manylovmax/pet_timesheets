@@ -1,0 +1,22 @@
+<div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
+  <div>{{ type() === 'create' ? 'Create' : 'Update' }} record</div>
+  <InputComponent 
+    type="number"
+    label="Minutes"
+    [(value)]="minutes"
+  />
+  <InputComponent 
+    type="date"
+    label="Date"
+    [(value)]="date"
+  />
+  <button 
+    class="bg-green-300 rounded-2xl px-2 uppercase cursor-pointer"
+    (click)="submit.emit()"
+  >submit</button>
+  <a 
+    class="underline"
+    [routerLink]="['/records']">
+    To records
+  </a>
+</div>
