@@ -1,14 +1,13 @@
 import config from "../constants";
 import { Service } from "@angular/core";
-import axios from "axios";
+import apiClient from "../apiClient";
 
-// Prevent Axios from throwing errors globally
-axios.defaults.validateStatus = () => true;
 
 export interface Tokens {
   access: string
   refresh: string
 }
+
 
 export interface User {
   id: number,
@@ -16,10 +15,11 @@ export interface User {
   fullname: string,
 }
 
+
 @Service()
 export class AuthService {
   async signin(password: string, email: string): Promise<boolean> {
-    const result = await axios.post(config.api.login, {email, password});
+    const result = await apiClient.post(config.api.login, {email, password});
 
     if (result?.data?.success) {
       localStorage.setItem(config.constants.accessTokenLSKey, result?.data?.access_token);
@@ -35,7 +35,7 @@ export class AuthService {
   async verify(): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     try {
-      const result = await axios.get(config.api.verify, 
+      const result = await apiClient.get(config.api.verify, 
         {
           headers: {
             'access-token': accessToken,
@@ -57,7 +57,7 @@ export class AuthService {
     email: string,
     fullname: string,
   }): Promise<boolean> {
-    const result = await axios.post(config.api.signup, props);
+    const result = await apiClient.post(config.api.signup, props);
 
     if (result?.data?.success) {
       localStorage.setItem(config.constants.accessTokenLSKey, result?.data?.access_token);
@@ -73,7 +73,7 @@ export class AuthService {
   async signout(): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     try {
-      const result = await axios.post(config.api.logout, undefined, 
+      const result = await apiClient.post(config.api.logout, undefined, 
         {
           headers: {
             'access-token': accessToken,
@@ -92,7 +92,7 @@ export class AuthService {
 
   async self(): Promise<User | null> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-      const result = await axios.get(config.api.self, 
+      const result = await apiClient.get(config.api.self, 
         {
           headers: {
             'access-token': accessToken,

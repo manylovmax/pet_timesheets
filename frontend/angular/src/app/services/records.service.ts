@@ -1,9 +1,7 @@
+import apiClient from "../apiClient";
 import config from "../constants";
 import { Service } from "@angular/core";
-import axios from "axios";
 
-// Prevent Axios from throwing errors globally
-axios.defaults.validateStatus = () => true;
 
 export interface TimesheetsRecord {
   id: number,
@@ -13,12 +11,13 @@ export interface TimesheetsRecord {
   deleted: boolean,
 }
 
+
 @Service()
 export class RecordsService {
   async getAllRecords(): Promise<TimesheetsRecord[]> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const userId = localStorage.getItem(config.constants.userIdLSKey);
-    const result = await axios.get(config.api.records, {
+    const result = await apiClient.get(config.api.records, {
       params: {
         userId,
       },
@@ -43,7 +42,7 @@ export class RecordsService {
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const userId = localStorage.getItem(config.constants.userIdLSKey);
-    const result = await axios.post(config.api.record,
+    const result = await apiClient.post(config.api.record,
       {
         'user_id': userId,
         'minutes': props.minutes,
@@ -70,7 +69,7 @@ export class RecordsService {
   async deleteRecord(recordId: number): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const userId = localStorage.getItem(config.constants.userIdLSKey);
-    const result = await axios.delete(config.api.record, {
+    const result = await apiClient.delete(config.api.record, {
       params: {
         record_id: recordId,
         user_id: userId,
@@ -94,7 +93,7 @@ export class RecordsService {
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const userId = localStorage.getItem(config.constants.userIdLSKey);
-    const result = await axios.patch(config.api.record, 
+    const result = await apiClient.patch(config.api.record, 
       {
         record_id: params.recordId,
         user_id: userId,
@@ -117,7 +116,7 @@ export class RecordsService {
   async getRecord(recordId: number): Promise<TimesheetsRecord | null> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const userId = localStorage.getItem(config.constants.userIdLSKey);
-    const result = await axios.get(config.api.record, {
+    const result = await apiClient.get(config.api.record, {
       params: {
         userId,
         recordId,
