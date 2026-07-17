@@ -1,6 +1,6 @@
-const apiHost = 'http://api_gateway:8080/';
-const authBase = 'api/v1/auth/';
-const timesheetsBase = 'api/v1/timesheets/';
+export const apiHost = 'http://api_gateway:8080/';
+export const authBase = 'api/v1/auth/';
+export const timesheetsBase = 'api/v1/timesheets/';
 
 const config = {
   api: {
