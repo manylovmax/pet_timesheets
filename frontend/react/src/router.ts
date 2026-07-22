@@ -1,6 +1,7 @@
 import { createBrowserRouter, createContext, redirect, type LoaderFunctionArgs } from "react-router";
 import AuthService, { type User } from "./services/auth.service";
 import SigninPage from "./pages/SigninPage";
+import SignupPage from "./pages/SignupPage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
     },
     {
       path: "/signup",
-      // Component: SignupPage,
+      Component: SignupPage,
     },
     {
       path: "/record-create",
