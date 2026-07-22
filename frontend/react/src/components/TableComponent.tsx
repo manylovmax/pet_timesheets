@@ -1,3 +1,4 @@
+import { Pencil, Trash } from 'lucide-react';
 import './TableComponent.css';
 
 interface onActionCallback {
@@ -30,8 +31,8 @@ export default function TableComponent({onDelete, onUpdate, columns = [], rows =
         {columns.map(c => <td key={c.attribute}>{r[c.attribute]}</td>)}
         {<td key='actions'>
           <div className='flex gap-2 w-full justify-center'>
-            { onUpdate && <div onClick={() => onUpdate(i)}>Update</div> }
-            { onDelete && <div onClick={() => onDelete(i)}>Delete</div> }
+            { onUpdate && <Pencil size={32} color="black" strokeWidth={1} onClick={() => onUpdate(i)}>Update</Pencil> }
+            { onDelete && <Trash size={32} color="black" strokeWidth={1} onClick={() => onDelete(i)}>Delete</Trash> }
           </div>
         </td>}
       </tr>)}
