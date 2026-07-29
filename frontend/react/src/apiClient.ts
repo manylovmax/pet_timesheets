@@ -37,9 +37,8 @@ apiClient.interceptors.response.use(
       if (await refresh()) {
         originalRequest.headers['access-token'] = localStorage.getItem(config.constants.accessTokenLSKey);
         originalRequest.headers['refresh-token'] = localStorage.getItem(config.constants.refreshTokenLSKey);
-        return apiClient.request(error.config);
-      }
-      else
+        return apiClient.request(originalRequest);
+      } else
         window.location.href = '/signin';
     }
 
