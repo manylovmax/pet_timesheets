@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import TableComponent from "../components/TableComponent";
 import RecordsService, { type TimesheetsRecord } from "../services/records.service";
 import { useNavigate } from "react-router";
+import MainLayout from "../layouts/MainLayout";
 
 const recordsService = new RecordsService();
 const columns: Array<TableColumn> = [
@@ -62,14 +63,26 @@ export default function RecordsPage() {
     navigate(`/record-update/${records[index].id}`);
   }
 
+
+  const goToCreate = (): void => {
+    navigate('/record-create');
+  }
+
   return (
-    <div>
-      <TableComponent 
-        columns={columns} 
-        rows={rows}
-        onDelete={deleteRecord}
-        onUpdate={updateRecord}
-      />
-    </div>
+    <MainLayout>
+      <div className="flex flex-col">
+        <div className="flex">
+          <div className="uppercase cursor-pointer p-2 bg-gray-100 rounded-2xl"
+            onClick={goToCreate}
+          >Create</div>
+        </div>
+        <TableComponent 
+          columns={columns} 
+          rows={rows}
+          onDelete={deleteRecord}
+          onUpdate={updateRecord}
+        />
+      </div>
+    </MainLayout>
   );
 }
