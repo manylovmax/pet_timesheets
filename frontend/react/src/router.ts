@@ -9,15 +9,11 @@ export const userContext = createContext<User | null>(null);
 const authService = new AuthService();
 
 const authMiddleware = async ({ context }) => {
-  try {
-    const user = await authService.self();
-    if (!user) {
-      throw Error("No user returned");
-    }
-    context.set(userContext, user);
-  } catch {
+  const user = await authService.self();
+  if (!user) {
     throw redirect("/signin");
   }
+  context.set(userContext, user);
 }
 
 export async function userLoader({

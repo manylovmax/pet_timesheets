@@ -1,5 +1,6 @@
 import config from "../constants";
 import apiClient from "../apiClient";
+import { AxiosError } from "axios";
 
 
 export interface Tokens {
@@ -88,7 +89,8 @@ export class AuthService {
   }
 
   async self(): Promise<User | null> {
-    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    try {
+      const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
       const result = await apiClient.get(config.api.self, 
         {
           headers: {
@@ -101,6 +103,10 @@ export class AuthService {
       } else {
         alert(result?.data?.message);
       }
+    } catch (error) {
+      if (!(error instanceof AxiosError))
+        throw error;
+    }
 
     return null;
   }
