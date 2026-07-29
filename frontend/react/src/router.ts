@@ -3,6 +3,8 @@ import AuthService, { type User } from "./services/auth.service";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
 import RecordsPage from "./pages/RecordsPage";
+import RecordCreatePage from "./pages/RecordCreatePage";
+import RecordUpdatePage from "./pages/RecordUpdatePage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -47,13 +49,13 @@ const router = createBrowserRouter([
       path: "/record-create",
       middleware: [authMiddleware],
       loader: userLoader,
-      // Component: RecordCreatePage,
+      Component: RecordCreatePage,
     },
     {
       path: "/record-update/:id",
       middleware: [authMiddleware],
       loader: userLoader,
-      // Component: RecordUpdatePage,
+      Component: RecordUpdatePage,
     },
   ]
 );

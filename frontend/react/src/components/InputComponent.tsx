@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface onInputChangeCallback {
@@ -12,11 +12,13 @@ interface InputComponentProps {
   onInputChange: onInputChangeCallback;
 } 
 
-export default function InputComponent({label, type = 'text', onInputChange, initialValue} : InputComponentProps) {
+export default function InputComponent({label, type = 'text', onInputChange, initialValue = ''} : InputComponentProps) {
   const id = uuidv4();
-  const [value, setValue] = useState(initialValue || '');
+  const [value, setValue] = useState(initialValue);
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
     setValue(event.target.value);
     onInputChange(event.target.value);
   };
@@ -26,6 +28,7 @@ export default function InputComponent({label, type = 'text', onInputChange, ini
       { label && <label className='pl-2' htmlFor={id}>{label}</label>}
       
       <input 
+        id={id}
         className='bg-white rounded-2xl px-2' 
         type={type} 
         value={value}
