@@ -1,7 +1,12 @@
+import HeaderMenu from "../components/HeaderMenu"
+
 export default function MainLayout(props) {
   return (
-    <div>
-      { props.children }
-    </div>
+    <>
+      <HeaderMenu />
+      <main>
+        { props.children }
+      </main>
+    </>
   )
 }
