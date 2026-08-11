@@ -29,28 +29,28 @@ app.add_middleware(
   allow_headers=["*"],
 )
 engine = create_engine(
-  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  # "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  "sqlite:////home/user/projects/pet_timesheets/backend/timesheets/sqlite.db", connect_args={"autocommit": False}
 )
   
 
 class RecordCreate(BaseModel):
-  user_id: Annotated[int, Field(gt=0)]
   date: Date
   minutes: Annotated[int, Field(gt=0)]
 
 
 class RecordUpdate(BaseModel):
   record_id: Annotated[int, Field(gt=0)]
-  user_id: Annotated[int, Field(gt=0)]
   date: Date
   minutes: Annotated[int, Field(gt=0)]
 
 
 @app.post("/record")
-async def create_record(body: RecordCreate):  
+async def create_record(body: RecordCreate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = get_user_id_from_token()
   with Session(engine) as session:
     new_record = Record(
-      user_id=body.user_id,
+      user_id=user_id,
       date=body.date,
       minutes=body.minutes,
     )
@@ -63,7 +63,7 @@ async def create_record(body: RecordCreate):
 
 
 @app.delete("/record")
-async def delete_record(record_id: int, user_id: int):
+async def delete_record(record_id: int):
   with Session(engine) as session:
     stmt = select(Record).where(Record.id == record_id, Record.user_id == user_id)
     try:
@@ -103,7 +103,7 @@ async def update_record(body: RecordUpdate):
 
 
 @app.get("/records")
-async def get_records(userId: Annotated[int, Field(gt=0)]):  
+async def get_records():  
   with Session(engine) as session:
     stmt = select(Record).where(Record.user_id == userId, Record.deleted == False)
     records = session.scalars(stmt).all()
@@ -115,7 +115,7 @@ async def get_records(userId: Annotated[int, Field(gt=0)]):
 
 
 @app.get("/record")
-async def get_record(userId: Annotated[int, Field(gt=0)], recordId: Annotated[int, Field(gt=0)]):  
+async def get_record(recordId: Annotated[int, Field(gt=0)]):  
   with Session(engine) as session:
     stmt = select(Record).where(Record.user_id == userId, Record.deleted == False, Record.id == recordId)
     try: 
