@@ -42,5 +42,4 @@ target_metadata = OrmBase.metadata
 
 ### Для заупска с указанием порта
 
-Установить uvcorn  ```pip install "uvicorn[standard]"```.  
 Запустить сервер ```uvicorn main:app --host 0.0.0.0 --port 80```, где ```main``` путь к модулю, ```app``` - инстанс приложения в модуле.  
