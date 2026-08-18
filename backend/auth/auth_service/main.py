@@ -34,14 +34,15 @@ class TokenType(Enum):
   refresh = 'refresh'
   reset = 'reset'
 
-
+TIMESHEETS_SERVICE_HOST = 'http://timesheets_service:80'
 
 app = FastAPI()
 app.add_middleware(
   CORSMiddleware,
   allow_origins=[
     # change to frontend server host
-    'http://localhost:8081'
+    'http://localhost:8081',
+    TIMESHEETS_SERVICE_HOST,
   ],
   allow_credentials=True,
   allow_methods=["*"],
@@ -50,6 +51,7 @@ app.add_middleware(
 
 engine = create_engine(
   "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  # "sqlite:////home/user/projects/pet_timesheets/backend/auth/sqlite.db", connect_args={"autocommit": False}
 )
 
 

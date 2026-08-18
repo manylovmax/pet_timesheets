@@ -1,8 +1,10 @@
 import os
 import time
 
+import httpx
+
 from datetime import date as Date
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
@@ -30,27 +32,41 @@ app.add_middleware(
 )
 engine = create_engine(
   "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  # "sqlite:////home/user/projects/pet_timesheets/backend/timesheets/sqlite.db", connect_args={"autocommit": False}
 )
-  
+
+AUTH_SERVICE_HOST = 'http://auth_service:80'
 
 class RecordCreate(BaseModel):
-  user_id: Annotated[int, Field(gt=0)]
   date: Date
   minutes: Annotated[int, Field(gt=0)]
 
 
 class RecordUpdate(BaseModel):
   record_id: Annotated[int, Field(gt=0)]
-  user_id: Annotated[int, Field(gt=0)]
   date: Date
   minutes: Annotated[int, Field(gt=0)]
 
 
+async def get_user_id(access_token: str):
+  async with httpx.AsyncClient() as client:
+    try:
+      response = await client.get(AUTH_SERVICE_HOST + '/self', headers={'access-token': access_token})
+      response.raise_for_status() # Raises an error for 4xx/5xx status codes
+      response = response.json()
+      return response.get('data', {}).get('id')
+    except httpx.HTTPStatusError as exc:
+      raise HTTPException(status_code=exc.response.status_code, detail="External API error")
+    except httpx.RequestError:
+      raise HTTPException(status_code=503, detail="External API unreachable")
+
+
 @app.post("/record")
-async def create_record(body: RecordCreate):  
+async def create_record(body: RecordCreate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
   with Session(engine) as session:
     new_record = Record(
-      user_id=body.user_id,
+      user_id=user_id,
       date=body.date,
       minutes=body.minutes,
     )
@@ -63,7 +79,8 @@ async def create_record(body: RecordCreate):
 
 
 @app.delete("/record")
-async def delete_record(record_id: int, user_id: int):
+async def delete_record(record_id: int, access_token: Annotated[str | None, Header()] = None):
+  user_id = await get_user_id(access_token)
   with Session(engine) as session:
     stmt = select(Record).where(Record.id == record_id, Record.user_id == user_id)
     try:
@@ -82,9 +99,10 @@ async def delete_record(record_id: int, user_id: int):
 
 
 @app.patch("/record")
-async def update_record(body: RecordUpdate):  
+async def update_record(body: RecordUpdate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
   with Session(engine) as session:
-    stmt = select(Record).where(Record.id == body.record_id, Record.user_id == body.user_id, Record.deleted == False)
+    stmt = select(Record).where(Record.id == body.record_id, Record.user_id == user_id, Record.deleted == False)
     try:
       record = session.scalars(stmt).one()
     except NoResultFound:
@@ -103,9 +121,10 @@ async def update_record(body: RecordUpdate):
 
 
 @app.get("/records")
-async def get_records(userId: Annotated[int, Field(gt=0)]):  
+async def get_records(access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
   with Session(engine) as session:
-    stmt = select(Record).where(Record.user_id == userId, Record.deleted == False)
+    stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False)
     records = session.scalars(stmt).all()
 
   return {
@@ -115,9 +134,10 @@ async def get_records(userId: Annotated[int, Field(gt=0)]):
 
 
 @app.get("/record")
-async def get_record(userId: Annotated[int, Field(gt=0)], recordId: Annotated[int, Field(gt=0)]):  
+async def get_record(recordId: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
   with Session(engine) as session:
-    stmt = select(Record).where(Record.user_id == userId, Record.deleted == False, Record.id == recordId)
+    stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False, Record.id == recordId)
     try: 
       record = session.scalars(stmt).one()
     except (NoResultFound, MultipleResultsFound):
