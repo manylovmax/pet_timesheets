@@ -18,7 +18,6 @@ const config = {
   constants: {
     accessTokenLSKey: 'access-token',
     refreshTokenLSKey: 'refresh-token',
-    userIdLSKey: 'userId',
   }
 };
 

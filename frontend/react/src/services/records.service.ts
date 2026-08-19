@@ -13,11 +13,7 @@ export interface TimesheetsRecord {
 export class RecordsService {
   async getAllRecords(): Promise<TimesheetsRecord[]> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const userId = localStorage.getItem(config.constants.userIdLSKey);
     const result = await apiClient.get(config.api.records, {
-      params: {
-        userId,
-      },
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json'
@@ -38,10 +34,8 @@ export class RecordsService {
     date: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const userId = localStorage.getItem(config.constants.userIdLSKey);
     const result = await apiClient.post(config.api.record,
       {
-        'user_id': userId,
         'minutes': props.minutes,
         'date': props.date,
       },
@@ -65,11 +59,9 @@ export class RecordsService {
 
   async deleteRecord(recordId: number): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const userId = localStorage.getItem(config.constants.userIdLSKey);
     const result = await apiClient.delete(config.api.record, {
       params: {
         record_id: recordId,
-        user_id: userId,
       },
       headers: {
         'access-token': accessToken,
@@ -89,11 +81,9 @@ export class RecordsService {
     date: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const userId = localStorage.getItem(config.constants.userIdLSKey);
     const result = await apiClient.patch(config.api.record, 
       {
         record_id: params.recordId,
-        user_id: userId,
         minutes: params.minutes,
         date: params.date,
       },
@@ -112,10 +102,8 @@ export class RecordsService {
 
   async getRecord(recordId: number): Promise<TimesheetsRecord | null> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const userId = localStorage.getItem(config.constants.userIdLSKey);
     const result = await apiClient.get(config.api.record, {
       params: {
-        userId,
         recordId,
       },
       headers: {
