@@ -1,4 +1,4 @@
-export const apiHost = 'http://api_gateway:8080/';
+export const apiHost = 'http://localhost:8080/';
 export const authBase = 'api/v1/auth/';
 export const timesheetsBase = 'api/v1/timesheets/';
 

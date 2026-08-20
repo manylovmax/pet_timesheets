@@ -42,6 +42,8 @@ app.add_middleware(
   allow_origins=[
     # change to frontend server host
     'http://localhost:8081',
+    'http://localhost:8082',
+    'http://localhost:8083',
     TIMESHEETS_SERVICE_HOST,
   ],
   allow_credentials=True,

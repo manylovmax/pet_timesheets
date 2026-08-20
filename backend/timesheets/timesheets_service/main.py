@@ -24,7 +24,9 @@ app.add_middleware(
   CORSMiddleware,
   allow_origins=[
     # change to frontend server host
-    'http://localhost:8081'
+    'http://localhost:8081',
+    'http://localhost:8082',
+    'http://localhost:8083',
   ],
   allow_credentials=True,
   allow_methods=["*"],
