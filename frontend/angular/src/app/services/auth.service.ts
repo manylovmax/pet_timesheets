@@ -72,11 +72,13 @@ export class AuthService {
 
   async signout(): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const refreshToken = localStorage.getItem(config.constants.refreshTokenLSKey);
     try {
       const result = await apiClient.post(config.api.logout, undefined, 
         {
           headers: {
             'access-token': accessToken,
+            'refresh-token': refreshToken,
             'Content-Type': 'application/json'
           }
       });

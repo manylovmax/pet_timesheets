@@ -187,30 +187,34 @@ async def login(response: Response, form: LoginBody):
 
 
 @app.post("/logout")
-async def logout(response: Response, access_token: Annotated[str | None, Header()] = None):
+async def logout(response: Response,
+                 access_token: Annotated[str | None, Header()] = None,
+                 refresh_token: Annotated[str | None, Header()] = None):
   with Session(engine) as session:
-    stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token)
+    access_token_stmt = select(Token).where(Token.type == TokenType.access.value, Token.value == access_token)
     try:
-      token = session.scalars(stmt).one()
+      access_token_obj = session.scalars(access_token_stmt).one()
+      if access_token_obj:  
+        session.delete(access_token_obj)
+        session.commit()
     except exc.NoResultFound:
       response.status_code = status.HTTP_404_NOT_FOUND
       return {
         SUCCESS_FLAG_NAME: False,
         MESSAGE_NAME: "Wrong access token.",
       }
+      
+    refresh_token_stmt = select(Token).where(Token.type == TokenType.refresh.value, Token.value == refresh_token)
+    try:
+      refresh_token_obj = session.scalars(refresh_token_stmt).one()
+      if refresh_token_obj:  
+        session.delete(refresh_token_obj)
+        session.commit()
+    except exc.NoResultFound:
+      pass
 
-    if token:  
-      session.delete(token)
-      session.commit()
-
-      return {
-        SUCCESS_FLAG_NAME: True
-      }
-    
-  response.status_code = status.HTTP_400_BAD_REQUEST
   return {
-    SUCCESS_FLAG_NAME: False,
-    MESSAGE_NAME: "Something went wrong."
+    SUCCESS_FLAG_NAME: True,
   }
 
 
@@ -227,7 +231,9 @@ def get_access_token(access_token: str) -> Token | None:
 
 @app.get("/verify")
 async def verify(response: Response, access_token: Annotated[str | None, Header()] = None):
-  token = get_access_token(access_token)
+  token = None
+  if access_token:
+    token = get_access_token(access_token)
   if not token:
     response.status_code = status.HTTP_403_FORBIDDEN
     return {
