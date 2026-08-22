@@ -3,6 +3,13 @@ services:
     build: backend/auth/
   timesheets_service:
     build: backend/timesheets/
+  api_gateway:
+    build: api_gateway/
+    ports: 
+      - 8080:80
+    depends_on:
+      - auth_service
+      - timesheets_service
   frontend_angular:
     build: frontend/angular/
     ports: 
@@ -11,10 +18,7 @@ services:
     build: frontend/vue/
     ports: 
       - 8082:80
-  api_gateway:
-    build: api_gateway/
+  frontend_react:
+    build: frontend/react/
     ports: 
-      - 8080:80
-    depends_on:
-      - auth_service
-      - timesheets_service
+      - 8083:80
