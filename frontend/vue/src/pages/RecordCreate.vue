@@ -5,13 +5,14 @@ import { ref } from 'vue';
 import RecordsService from '@/services/records.service';
 const minutes = ref(1);
 const date = ref();
+const comment = ref('');
 const recordsService = new RecordsService();
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 async function post() {
-  const result = await recordsService.createRecord({minutes: minutes.value, date: date.value});
+  const result = await recordsService.createRecord({minutes: minutes.value, date: date.value, comment: comment.value});
   if (result)
     router.push('/records');
   else
@@ -25,6 +26,7 @@ async function post() {
         type="create"
         v-model:date="date"
         v-model:minutes="minutes"
+        v-model:comment="comment"
         @submit="post()"
         />
     </div>

@@ -27,6 +27,10 @@ const columns: Array<TableColumn> = [
     label: 'Minutes',
     attribute: 'minutes',
   },
+  {
+    label: 'Comment',
+    attribute: 'comment',
+  },
 ];
 records.value = await recordsService.getAllRecords();
 mappedRecords.value = records.value.map(r => ({
@@ -34,6 +38,7 @@ mappedRecords.value = records.value.map(r => ({
   'user_id': `${r.user_id}`,
   'date': r.date,
   'minutes': `${r.minutes}`,
+  'comment': r.comment,
 }));
 
 async function deleteRecord(index: number) {
@@ -47,6 +52,7 @@ async function deleteRecord(index: number) {
         'user_id': `${r.user_id}`,
         'date': r.date,
         'minutes': `${r.minutes}`,
+        'comment': r.comment,
       }));
     }
   }

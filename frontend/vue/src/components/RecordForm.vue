@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InputComponent from './InputComponent.vue';
+import TextareaComponent from './TextareaComponent.vue';
 
 interface Props {
   type: 'create' | 'update',
@@ -8,6 +9,11 @@ const props = defineProps<Props>();
 
 const dateModel = defineModel('date');
 const minutesModel = defineModel('minutes');
+const commentModel = defineModel('comment', {
+  type: String, 
+  required: false, 
+  default: '' 
+});
 const emit = defineEmits(['submit']);
 </script>
 <template>
@@ -22,6 +28,11 @@ const emit = defineEmits(['submit']);
       type="number"
       label="Minutes"
       v-model:value="minutesModel"
+    />
+    <textarea-component 
+      type="text"
+      label="Comment"
+      v-model:value="commentModel"
     />
     <button 
       class="bg-green-300 rounded-2xl px-2 uppercase cursor-pointer"

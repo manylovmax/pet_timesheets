@@ -7,6 +7,7 @@ export interface TimesheetsRecord {
   user_id: number,
   minutes: number,
   date: string,
+  comment: string,
   deleted: boolean,
 }
 
@@ -32,12 +33,14 @@ export class RecordsService {
   async createRecord(props: {
     minutes: number,
     date: string,
+    comment: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const result = await apiClient.post(config.api.record,
       {
         'minutes': props.minutes,
         'date': props.date,
+        'comment': props.comment,
       },
       {
         headers: {
@@ -79,6 +82,7 @@ export class RecordsService {
     recordId: number,
     minutes: number,
     date: string,
+    comment: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const result = await apiClient.patch(config.api.record, 
@@ -86,6 +90,7 @@ export class RecordsService {
         record_id: params.recordId,
         minutes: params.minutes,
         date: params.date,
+        comment: params.comment,
       },
       {
       headers: {

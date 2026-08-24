@@ -11,6 +11,7 @@ const route = useRoute();
 
 const minutes = ref<number>(1);
 const date = ref<string>('');
+const comment = ref<string>('');
 
 const record = await recordsService.getRecord(Number(String(route.params.id)));
 if (!record)
@@ -18,11 +19,17 @@ if (!record)
 else {
   minutes.value = record.minutes;
   date.value = record.date;
+  comment.value = record.comment;
 }
 
 
 async function post() {
-  const result = await recordsService.updateRecord({recordId: Number(String(route.params.id)), minutes: minutes.value, date: date.value});
+  const result = await recordsService.updateRecord({
+    recordId: Number(String(route.params.id)), 
+    minutes: minutes.value, 
+    date: date.value,
+    comment: comment.value,
+  });
   if (result)
     router.push('/records');
   else
@@ -36,6 +43,7 @@ async function post() {
         type="update"
         v-model:date="date"
         v-model:minutes="minutes"
+        v-model:comment="comment"
         @submit="post()"
         />
     </div>

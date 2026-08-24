@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Pencil, Trash } from '@lucide/vue';
+import { computed } from 'vue';
 
 export interface TableColumn {
   label: string, 
@@ -13,6 +14,12 @@ interface Props {
 };
 const props = defineProps<Props>();
 const emit = defineEmits(['delete', 'update']);
+const colspan = computed(() => {
+  const rowsCount = props.rows.length;
+  const actionButtonPresent = props.deleteButton || props.updateButton;
+
+  return rowsCount + (actionButtonPresent ? 1 : 0);
+});
 </script>
 <template>
   <table 
@@ -48,7 +55,7 @@ const emit = defineEmits(['delete', 'update']);
     </tbody>
     <tbody v-else>
       <tr>
-        <td :colspan="props.columns.length">No data</td>
+        <td :colspan="colspan">No data</td>
       </tr>
     </tbody>
   </table>
