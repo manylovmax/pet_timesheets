@@ -34,7 +34,7 @@ app.add_middleware(
 )
 engine = create_engine(
   "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
-  # "sqlite:////home/user/projects/pet_timesheets/backend/timesheets/sqlite.db", connect_args={"autocommit": False}
+#  "sqlite:////home/user/projects/pet_timesheets/backend/timesheets/sqlite.db", connect_args={"autocommit": False}
 )
 
 AUTH_SERVICE_HOST = 'http://auth_service:80'
@@ -42,15 +42,20 @@ AUTH_SERVICE_HOST = 'http://auth_service:80'
 class RecordCreate(BaseModel):
   date: Date
   minutes: Annotated[int, Field(gt=0)]
+  comment: str
 
 
 class RecordUpdate(BaseModel):
   record_id: Annotated[int, Field(gt=0)]
   date: Date
   minutes: Annotated[int, Field(gt=0)]
+  comment: str
 
 
-async def get_user_id(access_token: str):
+async def get_user_id(access_token: str | None) -> int | None:
+  if not access_token:
+    return None
+  
   async with httpx.AsyncClient() as client:
     try:
       response = await client.get(AUTH_SERVICE_HOST + '/self', headers={'access-token': access_token})
@@ -66,11 +71,18 @@ async def get_user_id(access_token: str):
 @app.post("/record")
 async def create_record(body: RecordCreate, access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
   with Session(engine) as session:
     new_record = Record(
       user_id=user_id,
       date=body.date,
       minutes=body.minutes,
+      comment=body.comment,
     )
     session.add(new_record)
     session.commit()
@@ -83,6 +95,12 @@ async def create_record(body: RecordCreate, access_token: Annotated[str | None, 
 @app.delete("/record")
 async def delete_record(record_id: int, access_token: Annotated[str | None, Header()] = None):
   user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
   with Session(engine) as session:
     stmt = select(Record).where(Record.id == record_id, Record.user_id == user_id)
     try:
@@ -103,6 +121,12 @@ async def delete_record(record_id: int, access_token: Annotated[str | None, Head
 @app.patch("/record")
 async def update_record(body: RecordUpdate, access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
   with Session(engine) as session:
     stmt = select(Record).where(Record.id == body.record_id, Record.user_id == user_id, Record.deleted == False)
     try:
@@ -115,6 +139,7 @@ async def update_record(body: RecordUpdate, access_token: Annotated[str | None, 
     
     record.date = body.date
     record.minutes = body.minutes
+    record.comment = body.comment
     session.commit()
 
   return {
@@ -125,6 +150,12 @@ async def update_record(body: RecordUpdate, access_token: Annotated[str | None, 
 @app.get("/records")
 async def get_records(access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
   with Session(engine) as session:
     stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False)
     records = session.scalars(stmt).all()
@@ -138,6 +169,12 @@ async def get_records(access_token: Annotated[str | None, Header()] = None):
 @app.get("/record")
 async def get_record(recordId: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
   with Session(engine) as session:
     stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False, Record.id == recordId)
     try: 
