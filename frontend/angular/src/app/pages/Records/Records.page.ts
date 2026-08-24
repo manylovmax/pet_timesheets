@@ -26,6 +26,10 @@ export class RecordsPage implements OnInit {
       label: 'Minutes',
       attribute: 'minutes',
     },
+    {
+      label: 'Comment',
+      attribute: 'comment',
+    },
   ];
   private records: TimesheetsRecord[] = [];
   mappedRecords: WritableSignal<Record<string, string>[]> = signal([]);
@@ -41,6 +45,7 @@ export class RecordsPage implements OnInit {
       'user_id': `${r.user_id}`,
       'date': r.date,
       'minutes': `${r.minutes}`,
+      'comment': `${r.comment}`,
     })));
   }
 

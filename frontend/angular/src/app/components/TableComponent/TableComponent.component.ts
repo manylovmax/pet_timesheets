@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { Component, computed, input, output } from "@angular/core";
 import  { LucidePencil, LucideTrash } from '@lucide/angular'
 
 export interface TableColumn {
@@ -19,6 +19,11 @@ export class TableComponent {
   updateButton = input<boolean>(false);
   update = output<number>(); 
   delete = output<number>();
+  colspan = computed(() => {
+    const columnsLength = this.columns().length;
+    const actionsColumnPresent = this.deleteButton() || this.updateButton();
+    return columnsLength + (actionsColumnPresent ? 1 : 0);
+  });
 
   onUpdate(index: number) {
     this.update.emit(index);

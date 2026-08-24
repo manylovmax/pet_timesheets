@@ -1,0 +1,11 @@
+<div class="flex flex-col">
+  <label
+    class="pl-2" 
+    [for]="id">{{ label() || '' }}</label>
+  <textarea 
+    class="bg-white rounded-2xl px-2"
+    [id]="id"
+    [value]="value()"
+    (input)="onInput($event)"
+  ></textarea>
+</div>

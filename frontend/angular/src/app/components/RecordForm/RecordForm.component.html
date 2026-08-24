@@ -10,8 +10,12 @@
     label="Date"
     [(value)]="date"
   />
+  <TextareaComponent 
+    label="Comment"
+    [(value)]="comment"
+  />
   <button 
-    class="bg-green-300 rounded-2xl px-2 uppercase cursor-pointer"
+    class="bg-green-300 rounded-2xl p-2 uppercase cursor-pointer"
     (click)="submit.emit()"
   >submit</button>
   <a 

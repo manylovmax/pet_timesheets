@@ -7,7 +7,7 @@ import RecordsService, { TimesheetsRecord } from "../../services/records.service
 @Component({
   selector: 'RecordUpdatePage',
   templateUrl: './RecordUpdate.page.html',
-  imports: [MainLayout, RecordForm]
+  imports: [MainLayout, RecordForm],
 })
 export class RecordUpdatePage implements OnInit {
   private readonly recordsService = inject(RecordsService);
@@ -16,6 +16,7 @@ export class RecordUpdatePage implements OnInit {
 
   minutes: WritableSignal<string> = signal('1');
   date: WritableSignal<string> = signal('');
+  comment: WritableSignal<string> = signal('');
   private id: number = 0;
   private record: TimesheetsRecord | null = null
 
@@ -28,6 +29,7 @@ export class RecordUpdatePage implements OnInit {
     if (this.record) {
       this.minutes.set(String(this.record?.minutes));
       this.date.set(String(this.record?.date));
+      this.comment.set(String(this.record?.comment));
     }
   }
 
@@ -35,7 +37,8 @@ export class RecordUpdatePage implements OnInit {
     const result = await this.recordsService.updateRecord({
       recordId: this.id,
       minutes: Number(this.minutes()), 
-      date: this.date()
+      date: this.date(),
+      comment: this.comment(),
     });
     if (result)
       this.router.navigate(['/records']);

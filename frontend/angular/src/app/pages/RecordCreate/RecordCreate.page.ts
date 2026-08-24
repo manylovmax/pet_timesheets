@@ -7,7 +7,7 @@ import { Router } from "@angular/router";
 @Component({
   selector: 'RecordCreatePage',
   templateUrl: './RecordCreate.page.html',
-  imports: [MainLayout, RecordForm]
+  imports: [MainLayout, RecordForm],
 })
 export class RecordCreatePage {
   private readonly recordsService = inject(RecordsService);
@@ -15,9 +15,10 @@ export class RecordCreatePage {
 
   minutes: WritableSignal<string> = signal('1');
   date: WritableSignal<string> = signal('');
+  comment: WritableSignal<string> = signal('');
 
   async onCreate() {
-    const result = await this.recordsService.createRecord({minutes: Number(this.minutes()), date: this.date()});
+    const result = await this.recordsService.createRecord({minutes: Number(this.minutes()), date: this.date(), comment: this.comment()});
     if (result)
       this.router.navigate(['/records']);
     else
