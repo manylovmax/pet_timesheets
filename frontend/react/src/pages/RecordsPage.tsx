@@ -19,6 +19,10 @@ const columns: Array<TableColumn> = [
     label: 'Minutes',
     attribute: 'minutes',
   },
+  {
+    label: 'Comment',
+    attribute: 'comment',
+  },
 ];
 
 export default function RecordsPage() {
@@ -30,6 +34,7 @@ export default function RecordsPage() {
       'user_id': `${r.user_id}`,
       'date': r.date,
       'minutes': `${r.minutes}`,
+      'comment': r.comment,
     }));
   };
   const [rows, setRows] = useState<Record<string, string>[]>([]);

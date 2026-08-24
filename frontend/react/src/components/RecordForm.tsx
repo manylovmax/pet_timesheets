@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 
 import InputComponent from "./InputComponent";
+import TextareaComponent from "./TextareaComponent";
 
 interface onSubmitCallback {
-  (minutes: string, date: string): void;
+  (minutes: string, date: string, comment: string): void;
 }
 
 interface RecordFormComponentProps {
@@ -12,10 +13,11 @@ interface RecordFormComponentProps {
   onSubmit: onSubmitCallback;
   minutesInitial?: number;
   dateInitial?: string;
+  commentInitial?: string;
 } 
 
 
-export default function RecordForm({type = 'create', onSubmit, minutesInitial = 1, dateInitial = ''}: RecordFormComponentProps) {
+export default function RecordForm({type = 'create', onSubmit, minutesInitial = 1, dateInitial = '', commentInitial = ''}: RecordFormComponentProps) {
   const [minutes, setMinutes] = useState(String(minutesInitial));
   useEffect(() => {
     setMinutes(String(minutesInitial))
@@ -29,6 +31,13 @@ export default function RecordForm({type = 'create', onSubmit, minutesInitial = 
   }, [dateInitial]);
   const onDateChange = (value: string) => {
     setDate(value);
+  };
+  const [comment, setComment] = useState(commentInitial);
+  useEffect(() => {
+    setComment(commentInitial)
+  }, [commentInitial]);
+  const onCommentChange = (value: string) => {
+    setComment(value);
   };
   
   return (
@@ -46,9 +55,14 @@ export default function RecordForm({type = 'create', onSubmit, minutesInitial = 
         onInputChange={onMinutesChange}
         initialValue={minutes}  
       />
+      <TextareaComponent 
+        label="Comment"
+        initialValue={comment}
+        onChange={onCommentChange}
+      />
       <button 
         className="bg-green-300 rounded-2xl px-2 uppercase"
-        onClick={() => onSubmit(minutes, date)}
+        onClick={() => onSubmit(minutes, date, comment)}
       >{ type === 'create' ? 'Create' : 'Update'}
       </button>
       <NavLink

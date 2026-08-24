@@ -1,5 +1,6 @@
 import { Pencil, Trash } from 'lucide-react';
 import './TableComponent.css';
+import { useEffect, useState } from 'react';
 
 interface onActionCallback {
   (id: number): void;
@@ -18,6 +19,11 @@ interface TableComponentProps {
 } 
 
 export default function TableComponent({onDelete, onUpdate, columns = [], rows = []}: TableComponentProps) {  
+  const [colspan, setColspan] = useState(columns.length + (onDelete || onUpdate ? 1 : 0));
+  useEffect(() => {
+    setColspan(columns.length + (onDelete || onUpdate ? 1 : 0));
+  }, [rows, onDelete, onUpdate]);
+
   return columns.length && 
     <table className='w-full'>{
       <thead>
@@ -36,6 +42,7 @@ export default function TableComponent({onDelete, onUpdate, columns = [], rows =
           </div>
         </td>}
       </tr>)}
+      { !rows.length && <tr><td colSpan={colspan}>No data</td></tr>}
       </tbody>
     </table>;
 }

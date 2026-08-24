@@ -27,8 +27,13 @@ export default function RecordUpdatePage() {
     }
   }, []);
 
-  const updateRecord = async (minutes: string, date: string): Promise<void> => {
-    const result = await recordsService.updateRecord({minutes: Number(minutes), date, recordId: Number(id)});
+  const updateRecord = async (minutes: string, date: string, comment: string): Promise<void> => {
+    const result = await recordsService.updateRecord({
+      minutes: Number(minutes),
+      date,
+      recordId: Number(id),
+      comment,
+    });
     if (result)
       navigate('/records');
   }
@@ -41,6 +46,7 @@ export default function RecordUpdatePage() {
           onSubmit={updateRecord}
           minutesInitial={record?.minutes}
           dateInitial={record?.date}
+          commentInitial={record?.comment}
         />
       </div>
     </MainLayout>

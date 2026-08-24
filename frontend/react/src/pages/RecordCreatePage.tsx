@@ -9,8 +9,8 @@ const recordsService = new RecordsService();
 export default function RecordCreatePage() {
   const navigate = useNavigate();
 
-  const createRecord = async (minutes: string, date: string): Promise<void> => {
-    const result = await recordsService.createRecord({minutes: Number(minutes), date});
+  const createRecord = async (minutes: string, date: string, comment: string): Promise<void> => {
+    const result = await recordsService.createRecord({minutes: Number(minutes), date, comment});
     if (result)
       navigate('/records');
   }
