@@ -9,7 +9,7 @@ RUN npm ci
 # Copy application code
 COPY . .
 # build application
-RUN npm run build
+RUN npm run build-only
 
 # Stage 2: Serve the application using Nginx
 FROM nginx:alpine
