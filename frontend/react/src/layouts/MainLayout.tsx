@@ -5,7 +5,7 @@ export default function MainLayout(props) {
     <>
       <HeaderMenu />
       <div className="flex justify-center">
-        <div className="justify-between py-2 px-16 max-w-[1920px] w-full">
+        <div className="justify-between py-2 sm:px-16 max-w-[1920px] w-full">
           <main>
             { props.children }
           </main>

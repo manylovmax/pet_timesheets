@@ -25,7 +25,8 @@ export default function TableComponent({onDelete, onUpdate, columns = [], rows =
   }, [rows, onDelete, onUpdate]);
 
   return columns.length && 
-    <table className='w-full'>{
+  <div className="w-full overflow-x-scroll">
+    <table className='w-full min-w-[600px] py-2'>{
       <thead>
         <tr>
           {columns.map(c => <th key={c.attribute}>{c.label}</th>)}
@@ -44,5 +45,6 @@ export default function TableComponent({onDelete, onUpdate, columns = [], rows =
       </tr>)}
       { !rows.length && <tr><td colSpan={colspan}>No data</td></tr>}
       </tbody>
-    </table>;
+    </table>
+  </div>;
 }

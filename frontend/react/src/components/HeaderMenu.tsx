@@ -14,7 +14,7 @@ export default function HeaderMenu() {
   }
 
   return (
-    <div className="flex justify-between w-full px-16 py-2">
+    <div className="flex justify-between w-full sm:px-16 py-2">
       <div className="text-2xl">Timesheets</div>
       <div
         className="cursor-pointer"
