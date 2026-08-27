@@ -164,10 +164,10 @@ async def login(response: Response, form: LoginBody):
     }
   
   with Session(engine) as session:
-    # удалить старые токены
-    stmt = delete(Token).where(Token.user_id == user.id, Token.type.in_([TokenType.access.value, TokenType.refresh.value]))
-    session.execute(stmt)
-    session.commit()
+    # # удалить старые токены
+    # stmt = delete(Token).where(Token.user_id == user.id, Token.type.in_([TokenType.access.value, TokenType.refresh.value]))
+    # session.execute(stmt)
+    # session.commit()
 
     # создать новые токены и отправить на фронт
     access_token = generate_token()

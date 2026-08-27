@@ -1,0 +1,2 @@
+SHELL=/bin/sh
+0 2 * * * /app/cron/delete_old_tokens.sh

@@ -1,8 +1,12 @@
 #!/bin/sh
 set -e
+
 echo "Running database migrations..."
 cd /app/auth_service
 alembic upgrade head
+
+echo "Starting supersonic..."
+supercronic /etc/crontab &
 # Run the application
 cd /app
 echo "Starting application..."
