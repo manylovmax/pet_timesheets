@@ -1,5 +1,6 @@
 @if(columns().length) {
-<table class="w-full">
+<div class="w-full overflow-x-scroll">
+  <table class="w-full min-w-[600px] py-2">
     <thead>
       <tr>
         @for (col of columns(); track $index) {
@@ -16,7 +17,7 @@
       <tr>
         @for (col of columns(); track col.attribute) {
         <td>
-           {{ row[col.attribute] || '' }}
+          {{ row[col.attribute] || '' }}
         </td>
         }
         @if (updateButton() || deleteButton()) {
@@ -54,4 +55,5 @@
     </tbody>
     }
   </table>
+</div>
 }
