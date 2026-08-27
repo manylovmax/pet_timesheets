@@ -37,7 +37,7 @@ export default function SignupForm() {
   
   return (
     <div className="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
-      <div>Sign in</div>
+      <div>Sign up</div>
       <InputComponent 
         label="Fullname"
         type="text"
