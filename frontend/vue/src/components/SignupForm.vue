@@ -57,7 +57,7 @@ async function signup() {
     <RouterLink 
       class="underline"
       to="/signin">
-      Signin
+      Sign in
     </RouterLink>
   </div>
 </template>
