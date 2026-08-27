@@ -66,7 +66,7 @@ export default function SignupForm() {
       <NavLink
         to="/signin"
         className="underline"
-      >Signin
+      >Sign in
       </NavLink>
     </div>
   )
