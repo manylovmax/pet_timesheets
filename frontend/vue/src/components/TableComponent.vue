@@ -22,8 +22,8 @@ const colspan = computed(() => {
 });
 </script>
 <template>
-  <table 
-    class="rounded-2xl"
+<div class="w-full overflow-x-scroll">
+  <table class="w-full min-w-[600px] py-2"
     v-if="props.columns.length">
     <thead>
       <tr>
@@ -59,6 +59,7 @@ const colspan = computed(() => {
       </tr>
     </tbody>
   </table>
+</div>
 </template>
 <style>
 th, td {

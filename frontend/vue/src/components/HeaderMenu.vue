@@ -18,7 +18,7 @@ async function signout() {
 </script>
 <template>
   <div class="flex justify-center">
-    <div class="flex justify-between py-2 px-16 max-w-[1920px] w-full">
+    <div class="flex justify-between py-2 sm:px-16 max-w-[1920px] w-full">
       <div class="text-2xl">Timesheets</div>
       <div
         class="cursor-pointer"
