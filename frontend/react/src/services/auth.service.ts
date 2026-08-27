@@ -24,7 +24,12 @@ export class AuthService {
       localStorage.setItem(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
       return true
     } else {
-      alert(result?.data?.message);
+      if (result?.data?.message)
+        alert(result?.data?.message);
+      else if (result?.status === 422)
+        alert('Validation error');
+      else
+        alert('Error');
     }
 
     return false;
@@ -62,7 +67,12 @@ export class AuthService {
       localStorage.setItem(config.constants.refreshTokenLSKey, result?.data?.refresh_token);
       return true
     } else {
-      alert(result?.data?.message);
+      if (result?.data?.message)
+        alert(result?.data?.message);
+      else if (result?.status === 422)
+        alert('Validation error');
+      else
+        alert('Error');
     }
 
     return false;
