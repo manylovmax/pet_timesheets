@@ -29,7 +29,7 @@ async function signup() {
 </script>
 <template>
   <div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
-    <div>Sign in</div>
+    <div>Sign up</div>
     <input-component
       label="Email"
       type="email"
