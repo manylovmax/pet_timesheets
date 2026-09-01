@@ -1,9 +1,12 @@
 <MainLayout>
   <div class="flex flex-col gap-8">
-    <div class="flex">
+    <div class="flex gap-4">
       <div class="uppercase cursor-pointer p-2 bg-gray-100 rounded-2xl"
         (click)="goToCreate()"
       >Create</div>
+      <div class="cursor-pointer p-2 bg-gray-100 rounded-2xl"
+        (click)="goToTimetable()"
+      >Go to new layout</div>
     </div>
     <TableComponent 
       [columns]="columns"

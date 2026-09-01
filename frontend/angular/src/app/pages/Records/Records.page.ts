@@ -50,7 +50,7 @@ export class RecordsPage implements OnInit {
   }
 
   goToCreate() {
-    this.router.navigate(['/record-create'])
+    this.router.navigate(['/record-create']);
   }
 
   goToUpdatePage(index: number) {
@@ -66,5 +66,9 @@ export class RecordsPage implements OnInit {
         await this.refreshRecords();
       }
     }
+  }
+
+  goToTimetable() {
+    this.router.navigate(['/timetable']);
   }
 }

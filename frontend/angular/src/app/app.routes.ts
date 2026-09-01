@@ -35,6 +35,6 @@ export const routes: Routes = [
   {
     path: 'timetable',
     component: TimeTablePage,
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
   },
 ];

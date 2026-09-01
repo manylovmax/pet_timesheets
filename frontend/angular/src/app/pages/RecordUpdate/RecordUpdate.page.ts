@@ -43,6 +43,6 @@ export class RecordUpdatePage implements OnInit {
     if (result)
       this.router.navigate(['/records']);
     else
-      alert('Record creation failure.');
+      alert('Record update failure.');
   }
 }

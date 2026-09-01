@@ -1,65 +1,62 @@
-<div class="flex w-full min-w-[1530px]">
-  <div class="p-2 border-gray-200 border-r-2">
+<div class="flex flex-row-reverse pb-4">
+  <div
+    class="cursor-pointer rounded-2xl p-2 bg-green-200" 
+    (click)="goToCreate()"
+  >Add a record</div>
+</div>
+<div class="flex w-full h-[90]">
+  @for (weekDay of weekDays(); track weekDay.index) {
+  <div 
+    class="p-2 border-gray-200 min-h-[90vh] min-w-[225px]"
+    [class]="{
+      'border-r-2': weekDay.index !== 6,
+      'bg-blue-100': weekDay.isToday
+    }"
+  >
     <div class="flex justify-between gap-8">
       <div class="flex gap-4">
-        <div>Monday</div>
-        <div>31</div>
+        <div>{{ weekDay.title }}</div>
+        <div>{{ weekDay.date }}</div>
       </div>
-      <div>0h of 8h</div>
+    </div>
+
+    <div class="flex-col gap-4 pt-4">
+      @for(record of weekDay.records; track record.id) {
+      <div 
+        class="bg-gray-100 p-2 rounded-xl cursor-pointer"
+        (click)="onEdit(record.id)"  
+      >
+        <div>minutes: {{ record.minutes }}</div>
+        <div>{{ record.comment }}</div>
+      </div>
+      }
     </div>
   </div>  
-  <div class="p-2 border-gray-200 border-r-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Tuesday</div>
-        <div>1</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
-  <div class="p-2 border-gray-200 border-r-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Wednesday</div>
-        <div>2</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
-  <div class="p-2 border-gray-200 border-r-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Thursday</div>
-        <div>3</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
-  <div class="p-2 border-gray-200 border-r-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Friday</div>
-        <div>4</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
-  <div class="p-2 border-gray-200 border-r-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Saturday</div>
-        <div>5</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
-  <div class="p-2">
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>Sunday</div>
-        <div>6</div>
-      </div>
-      <div>0h of 8h</div>
-    </div>
-  </div>  
+  }
+</div>
+
+
+<div class="flex items-center justify-center z-50 fixed inset-0"
+  [class]="modalOpen ? 'block' : 'hidden'"
+>
+  <div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
+    <div>Update record</div>
+    <InputComponent 
+      type="number"
+      label="Minutes"
+      [(value)]="minutes"
+    />
+    <TextareaComponent 
+      label="Comment"
+      [(value)]="comment"
+    />
+    <button 
+      class="bg-green-300 rounded-2xl p-2 uppercase cursor-pointer"
+      (click)="onSave()"
+    >submit</button>
+    <button 
+      class="bg-red-300 rounded-2xl p-2 uppercase cursor-pointer"
+      (click)="onDelete()"
+    >delete</button>
+  </div>
 </div>

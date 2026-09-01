@@ -14,6 +14,7 @@ const config = {
     self: apiHost + authBase + 'self',
     record: apiHost + timesheetsBase + 'record',
     records: apiHost + timesheetsBase + 'records',
+    recordsForPeriod: apiHost + timesheetsBase + 'records-for-period',
   },
   constants: {
     accessTokenLSKey: 'access-token',

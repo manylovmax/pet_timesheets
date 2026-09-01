@@ -129,6 +129,25 @@ export class RecordsService {
     return null;
   }
 
+  async getRecordsForPeriod(startDate: string, endDate: string): Promise<TimesheetsRecord[]> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const result = await apiClient.post(config.api.recordsForPeriod, 
+    { startDate, endDate },  
+    {
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (result?.data?.success) {
+      return result?.data?.data;
+    } else {
+      alert(result?.data?.message);
+    }
+
+    return [];
+  }
 }
 
 
