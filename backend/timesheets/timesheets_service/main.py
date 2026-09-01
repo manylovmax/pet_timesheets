@@ -3,7 +3,7 @@ import time
 
 import httpx
 
-from datetime import date as Date
+from datetime import date as Date, datetime
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select
@@ -39,6 +39,7 @@ engine = create_engine(
 
 AUTH_SERVICE_HOST = 'http://auth_service:80'
 
+
 class RecordCreate(BaseModel):
   date: Date
   minutes: Annotated[int, Field(gt=0)]
@@ -50,6 +51,11 @@ class RecordUpdate(BaseModel):
   date: Date
   minutes: Annotated[int, Field(gt=0)]
   comment: str
+
+
+class RecordsFilter(BaseModel):
+  startDate: str
+  endDate: str 
 
 
 async def get_user_id(access_token: str | None) -> int | None:
@@ -188,4 +194,34 @@ async def get_record(recordId: Annotated[int, Field(gt=0)], access_token: Annota
   return {
     "success": True,
     "data": record
+  }
+
+
+@app.post("/records-for-period")
+async def get_records_for_period(body: RecordsFilter, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+
+  try:
+    start_date = datetime.strptime(body.startDate, "%Y-%m-%d").date()
+    end_date = datetime.strptime(body.endDate, "%Y-%m-%d").date()
+  except:
+    pass
+  
+  with Session(engine) as session:
+    stmt = select(Record).where(
+      Record.user_id == user_id, 
+      Record.deleted == False,
+      Record.date >= start_date,
+      Record.date <= end_date,
+    )
+    records = session.scalars(stmt).all()
+
+  return {
+    "success": True,
+    "data": records
   }
