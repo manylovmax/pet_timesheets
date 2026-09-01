@@ -5,6 +5,7 @@ import { RecordUpdatePage } from './pages/RecordUpdate/RecordUpdate.page';
 import { RecordsPage } from './pages/Records/Records.page';
 import { RecordCreatePage } from './pages/RecordCreate/RecordCreate.page';
 import { authGuard } from './guards/AuthGuard';
+import { TimeTablePage } from './pages/TimeTable/TimeTable.page';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/records', pathMatch: 'full' },
@@ -30,5 +31,10 @@ export const routes: Routes = [
     path: 'record-create',
     component: RecordCreatePage,
     canActivate: [authGuard],
+  },
+  {
+    path: 'timetable',
+    component: TimeTablePage,
+    // canActivate: [authGuard],
   },
 ];
