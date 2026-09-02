@@ -1,8 +1,21 @@
-<div class="flex flex-row-reverse pb-4">
-  <div
-    class="cursor-pointer rounded-2xl p-2 bg-green-200" 
-    (click)="goToCreate()"
-  >Add a record</div>
+<div class="flex justify-between">
+  <div>
+    <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
+  </div>
+  <div class="flex flex-row-reverse pb-4 gap-2">
+    <div
+      class="cursor-pointer rounded-2xl p-2 bg-green-200 select-none" 
+      (click)="goToCreate()"
+    >Add a record</div>
+    <div 
+      class="cursor-pointer p-2 select-none underline"
+      (click)="goToNextWeek()"  
+    >Later</div>
+    <div 
+      class="cursor-pointer p-2 select-none underline"
+      (click)="goToPreviousWeek()"  
+    >Earlier</div>
+  </div>
 </div>
 <div class="flex w-full h-[90]">
   @for (weekDay of weekDays(); track weekDay.index) {
@@ -38,8 +51,20 @@
 
 <div class="flex items-center justify-center z-50 fixed inset-0"
   [class]="modalOpen ? 'block' : 'hidden'"
+  (click)="onView()"
 >
-  <div class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center">
+  <div class="fixed inset-0 transition-opacity backdrop-blur-md"></div>
+  <div 
+    (click)="$event.stopPropagation()"
+    class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center z-10 relative">
+    <svg lucideX
+      class="cursor-pointer absolute top-2 right-2" 
+      [size]="32" 
+      color="black" 
+      [strokeWidth]="1" 
+      title="Update"
+      (click)="onView()"  
+            ></svg>
     <div>Update record</div>
     <InputComponent 
       type="number"
@@ -50,13 +75,15 @@
       label="Comment"
       [(value)]="comment"
     />
-    <button 
-      class="bg-green-300 rounded-2xl p-2 uppercase cursor-pointer"
-      (click)="onSave()"
-    >submit</button>
-    <button 
-      class="bg-red-300 rounded-2xl p-2 uppercase cursor-pointer"
-      (click)="onDelete()"
-    >delete</button>
+    <div class="flex gap-4">
+      <button 
+        class="bg-red-300 rounded-2xl p-2 uppercase cursor-pointer"
+        (click)="onDelete()"
+      >delete</button>
+      <button 
+        class="bg-green-300 rounded-2xl p-2 uppercase cursor-pointer"
+        (click)="onSave()"
+      >submit</button>
+    </div>
   </div>
 </div>

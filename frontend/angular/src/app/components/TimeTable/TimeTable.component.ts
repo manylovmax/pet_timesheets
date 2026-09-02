@@ -3,6 +3,7 @@ import RecordsService, { TimesheetsRecord } from "../../services/records.service
 import { Router } from "@angular/router";
 import { TextareaComponent } from "../Textarea/Textarea.component";
 import { InputComponent } from "../Input/Input.component";
+import  { LucideX } from '@lucide/angular'
 
 interface weekDay {
   title: string;
@@ -19,14 +20,15 @@ interface weekDay {
   selector: 'TimeTable',
   templateUrl: './TimeTable.component.html',
   styleUrl: './TimeTable.component.css',
-  imports: [TextareaComponent, InputComponent],
+  imports: [TextareaComponent, InputComponent, LucideX],
 })
 export class TimeTable implements OnInit {
   private readonly router = inject(Router);
   private readonly recordsService = inject(RecordsService);
   records: TimesheetsRecord[] = [];
-  private today = new Date();
+  currentDate = new Date();
   weekDays: WritableSignal<weekDay[]> = signal([]);
+  weekDaysPeriodString: string = '';
   modalOpen: boolean = false;
   editingRecord: TimesheetsRecord | undefined;
   minutes: WritableSignal<string> = signal('1');
@@ -34,18 +36,19 @@ export class TimeTable implements OnInit {
   comment: WritableSignal<string> = signal('');
   
   ngOnInit(): void {
-    const dayOfWeek = this.today.getDay();// starting from 0 - Sunday
-    const date = new Date();
-    date.setDate(this.today.getDate() - dayOfWeek);
-    this.initializeWeekdays(date);
+    this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay());
+    this.initializeWeekdays(this.currentDate);
     this.refreshRecords();
   }
 
   private initializeWeekdays(startDay: Date) {
+    const today = new Date();
     const weekDays: weekDay[] = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(startDay);
-      date.setDate(startDay.getDate() + i)
+      const weekDay = date.getDay();// starting from Sunday = 0, Saturday = 6
+      const shiftToMonday = 1 - weekDay;
+      date.setDate(startDay.getDate() + shiftToMonday + i)// remove the shiftToMonday term to start from Sunday
       weekDays.push({
         title: date.toLocaleDateString('en-US', { weekday: 'long' }), 
         date: date.getDate(),
@@ -54,10 +57,14 @@ export class TimeTable implements OnInit {
         dateObj: date,
         index: i,
         records: [],
-        isToday: this.today.toLocaleDateString('en-CA') == date.toLocaleDateString('en-CA')
+        isToday: today.toLocaleDateString('en-CA') == date.toLocaleDateString('en-CA')
       });
     }
     this.weekDays.set(weekDays);
+    this.weekDaysPeriodString = 
+      weekDays[0].dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+      + ' - ' +
+      weekDays[weekDays.length - 1].dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
   }
 
   private async refreshRecords(): Promise<void> {
@@ -122,5 +129,17 @@ export class TimeTable implements OnInit {
 
   goToCreate() {
     this.router.navigate(['/record-create']);
+  }
+
+  goToPreviousWeek() {
+    this.currentDate.setDate(this.currentDate.getDate() - 7);
+    this.initializeWeekdays(this.currentDate);
+    this.refreshRecords();
+  }
+
+  goToNextWeek() {
+    this.currentDate.setDate(this.currentDate.getDate() + 7);
+    this.initializeWeekdays(this.currentDate);
+    this.refreshRecords();
   }
 }
