@@ -20,7 +20,7 @@ export class RecordCreatePage {
   async onCreate() {
     const result = await this.recordsService.createRecord({minutes: Number(this.minutes()), date: this.date(), comment: this.comment()});
     if (result)
-      this.router.navigate(['/records']);
+      this.router.navigate(['/timetable']);
     else
       alert('Record creation failure.');
   }

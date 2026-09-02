@@ -41,7 +41,7 @@ export class RecordUpdatePage implements OnInit {
       comment: this.comment(),
     });
     if (result)
-      this.router.navigate(['/records']);
+      this.router.navigate(['/timetable']);
     else
       alert('Record update failure.');
   }

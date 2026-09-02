@@ -4,7 +4,11 @@
   </div>
   <div class="flex flex-row-reverse pb-4 gap-2">
     <div
-      class="cursor-pointer rounded-2xl p-2 bg-green-200 select-none" 
+      class="cursor-pointer p-2 underline select-none" 
+      (click)="goToOldLayout()"
+    >Go to old layout</div>
+    <div
+      class="cursor-pointer p-2 underline select-none" 
       (click)="goToCreate()"
     >Add a record</div>
     <div 

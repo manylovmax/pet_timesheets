@@ -142,4 +142,8 @@ export class TimeTable implements OnInit {
     this.initializeWeekdays(this.currentDate);
     this.refreshRecords();
   }
+
+  goToOldLayout() {
+    this.router.navigate(['/records']);
+  }
 }

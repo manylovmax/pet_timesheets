@@ -17,6 +17,6 @@ export class SigninForm {
 
   async login(): Promise<void> {
     if (await this.authService.signin(this.password(), this.email()))
-      this.router.navigate(['/records'])
+      this.router.navigate(['/timetable'])
   }
 }

@@ -22,6 +22,6 @@ export class SignupForm {
       email: this.email(),
       fullname: this.fullname(),
     }))
-      this.router.navigate(['/records'])
+      this.router.navigate(['/timetable'])
   }
 }
