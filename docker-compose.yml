@@ -3,6 +3,8 @@ services:
     build: backend/auth/
   timesheets_service:
     build: backend/timesheets/
+    depends_on:
+      - timesheets_db
   api_gateway:
     build: api_gateway/
     ports: 
@@ -10,15 +12,58 @@ services:
     depends_on:
       - auth_service
       - timesheets_service
-  frontend_angular:
-    build: frontend/angular/
-    ports: 
-      - 8081:80
-  frontend_vue:
-    build: frontend/vue/
-    ports: 
-      - 8082:80
-  frontend_react:
-    build: frontend/react/
-    ports: 
-      - 8083:80
+  # frontend_angular:
+  #   build: frontend/angular/
+  #   ports: 
+  #     - 8081:80
+  # frontend_vue:
+  #   build: frontend/vue/
+  #   ports: 
+  #     - 8082:80
+  # frontend_react:
+  #   build: frontend/react/
+  #   ports: 
+  #     - 8083:80
+  timesheets_db:
+    image: postgres:16-alpine
+    container_name: timesheets-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_TIMESHEETS_USER}
+      POSTGRES_PASSWORD: ${DB_TIMESHEETS_PASSWORD}
+      POSTGRES_DB: ${DB_TIMESHEETS_NAME}
+    # ports:
+    #   - "55432:5432"
+    volumes:
+      - timesheets_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_TIMESHEETS_USER} -d ${DB_TIMESHEETS_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth_db:
+    image: postgres:16-alpine
+    container_name: auth-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_AUTH_USER}
+      POSTGRES_PASSWORD: ${DB_AUTH_PASSWORD}
+      POSTGRES_DB: ${DB_AUTH_NAME}
+    # ports:
+    #   - "55432:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_TIMESHEETS_USER} -d ${DB_TIMESHEETS_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  timesheets_postgres_data:
+  auth_postgres_data:
