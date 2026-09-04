@@ -1,6 +1,8 @@
 services:
   auth_service:
     build: backend/auth/
+    depends_on:
+      - auth_db
   timesheets_service:
     build: backend/timesheets/
     depends_on:
