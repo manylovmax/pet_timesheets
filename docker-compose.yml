@@ -14,18 +14,18 @@ services:
     depends_on:
       - auth_service
       - timesheets_service
-  # frontend_angular:
-  #   build: frontend/angular/
-  #   ports: 
-  #     - 8081:80
-  # frontend_vue:
-  #   build: frontend/vue/
-  #   ports: 
-  #     - 8082:80
-  # frontend_react:
-  #   build: frontend/react/
-  #   ports: 
-  #     - 8083:80
+  frontend_angular:
+    build: frontend/angular/
+    ports: 
+      - 8081:80
+  frontend_vue:
+    build: frontend/vue/
+    ports: 
+      - 8082:80
+  frontend_react:
+    build: frontend/react/
+    ports: 
+      - 8083:80
   timesheets_db:
     image: postgres:16-alpine
     container_name: timesheets-db
