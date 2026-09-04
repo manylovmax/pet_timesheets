@@ -52,8 +52,9 @@ app.add_middleware(
 )
 
 engine = create_engine(
-  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+  # "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
   # "sqlite:////home/user/projects/pet_timesheets/backend/auth/sqlite.db", connect_args={"autocommit": False}
+  "postgresql+psycopg://auth:easypass@auth_db:5432/auth"
 )
 
 
