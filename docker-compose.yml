@@ -61,7 +61,7 @@ services:
     volumes:
       - auth_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_TIMESHEETS_USER} -d ${DB_TIMESHEETS_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_AUTH_USER} -d ${DB_AUTH_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
