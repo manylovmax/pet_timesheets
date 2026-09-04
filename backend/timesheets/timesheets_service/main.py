@@ -33,8 +33,9 @@ app.add_middleware(
   allow_headers=["*"],
 )
 engine = create_engine(
-  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
+#  "sqlite:////app/sqlite.db", connect_args={"autocommit": False}
 #  "sqlite:////home/user/projects/pet_timesheets/backend/timesheets/sqlite.db", connect_args={"autocommit": False}
+  "postgresql+psycopg://timesheets:easypass@timesheets_db:5432/timesheets"
 )
 
 AUTH_SERVICE_HOST = 'http://auth_service:80'

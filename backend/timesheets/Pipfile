@@ -8,6 +8,7 @@ fastapi = {extras = ["standard"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
 httpx = "*"
+psycopg = {extras = ["binary"], version = "*"}
 
 [dev-packages]
 
