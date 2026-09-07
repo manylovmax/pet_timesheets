@@ -1,55 +1,82 @@
-<div class="flex justify-between">
-  <div>
-    <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
-  </div>
-  <div class="flex flex-row-reverse pb-4 gap-2">
-    <div
-      class="cursor-pointer p-2 underline select-none" 
-      (click)="goToOldLayout()"
-    >Go to old layout</div>
-    <div
-      class="cursor-pointer p-2 underline select-none" 
-      (click)="goToCreate()"
-    >Add a record</div>
-    <div 
-      class="cursor-pointer p-2 select-none underline"
-      (click)="goToNextWeek()"  
-    >Later</div>
-    <div 
-      class="cursor-pointer p-2 select-none underline"
-      (click)="goToPreviousWeek()"  
-    >Earlier</div>
-  </div>
-</div>
-<div class="flex w-full h-[90]">
-  @for (weekDay of weekDays(); track weekDay.index) {
-  <div 
-    class="p-2 border-gray-200 min-h-[90vh] min-w-[225px]"
-    [class]="{
-      'border-r-2': weekDay.index !== 6,
-      'bg-blue-100': weekDay.isToday
-    }"
-  >
-    <div class="flex justify-between gap-8">
-      <div class="flex gap-4">
-        <div>{{ weekDay.title }}</div>
-        <div>{{ weekDay.date }}</div>
-      </div>
-    </div>
+<div>
 
-    <div class="flex-col gap-4 pt-4">
-      @for(record of weekDay.records; track record.id) {
-      <div 
-        class="bg-gray-100 p-2 rounded-xl cursor-pointer"
-        (click)="onEdit(record.id)"  
-      >
-        <div>minutes: {{ record.minutes }}</div>
-        <div>{{ record.comment }}</div>
-      </div>
-      }
+  <div class="hidden sm:flex  justify-between">
+    <div>
+      <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
     </div>
-  </div>  
-  }
+    <div class="flex flex-row-reverse pb-4 gap-2">
+      <div
+        class="cursor-pointer p-2 underline select-none" 
+        (click)="goToOldLayout()"
+      >Go to old layout</div>
+      <div
+        class="cursor-pointer p-2 underline select-none" 
+        (click)="goToCreate()"
+      >Add a record</div>
+      <div 
+        class="cursor-pointer p-2 select-none underline"
+        (click)="goToNextWeek()"  
+      >Later</div>
+      <div 
+        class="cursor-pointer p-2 select-none underline"
+        (click)="goToPreviousWeek()"  
+      >Earlier</div>
+    </div>
+  </div>
+  <div class="sm:hidden">
+    <div>
+      <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
+    </div>
+    <div class="flex flex-row-reverse pb-4 gap-2">
+      <div
+        class="cursor-pointer p-2 underline select-none" 
+        (click)="goToOldLayout()"
+      >Go to old layout</div>
+      <div
+        class="cursor-pointer p-2 underline select-none" 
+        (click)="goToCreate()"
+      >Add a record</div>
+      <div 
+        class="cursor-pointer p-2 select-none underline"
+        (click)="goToNextWeek()"  
+      >Later</div>
+      <div 
+        class="cursor-pointer p-2 select-none underline"
+        (click)="goToPreviousWeek()"  
+      >Earlier</div>
+    </div>
+  </div>
+
+  <div class="flex w-full overflow-x-auto">
+    @for (weekDay of weekDays(); track weekDay.index) {
+    <div 
+      class="p-2 border-gray-200 min-h-[60vh] min-w-[225px]"
+      [class]="{
+        'border-r-2': weekDay.index !== 6,
+        'bg-blue-100': weekDay.isToday
+      }"
+    >
+      <div class="flex justify-between gap-8">
+        <div class="flex gap-4">
+          <div>{{ weekDay.title }}</div>
+          <div>{{ weekDay.date }}</div>
+        </div>
+      </div>
+
+      <div class="flex-col gap-4 pt-4">
+        @for(record of weekDay.records; track record.id) {
+        <div 
+          class="bg-gray-100 p-2 rounded-xl cursor-pointer"
+          (click)="onEdit(record.id)"  
+        >
+          <div>minutes: {{ record.minutes }}</div>
+          <div>{{ record.comment }}</div>
+        </div>
+        }
+      </div>
+    </div>  
+    }
+  </div>
 </div>
 
 
