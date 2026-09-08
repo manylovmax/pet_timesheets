@@ -12,7 +12,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from pydantic import BaseModel, Field
 from typing import Annotated
 
-from timesheets_service.models import Record
+from timesheets_service.models import Record, Project, Task
 
 # Set the desired time zone
 os.environ['TZ'] = 'Europe/Moscow'
@@ -41,23 +41,7 @@ engine = create_engine(
 AUTH_SERVICE_HOST = 'http://auth_service:80'
 
 
-class RecordCreate(BaseModel):
-  date: Date
-  minutes: Annotated[int, Field(gt=0)]
-  comment: str
-
-
-class RecordUpdate(BaseModel):
-  record_id: Annotated[int, Field(gt=0)]
-  date: Date
-  minutes: Annotated[int, Field(gt=0)]
-  comment: str
-
-
-class RecordsFilter(BaseModel):
-  startDate: str
-  endDate: str 
-
+# helper function for checking access token
 
 async def get_user_id(access_token: str | None) -> int | None:
   if not access_token:
@@ -75,6 +59,24 @@ async def get_user_id(access_token: str | None) -> int | None:
       raise HTTPException(status_code=503, detail="External API unreachable")
 
 
+# Records API
+
+class RecordCreate(BaseModel):
+  task_id: Annotated[int, Field(gt=0)]
+  date: Date
+  minutes: Annotated[int, Field(gt=0)]
+  comment: str
+
+
+class RecordUpdate(RecordCreate):
+  record_id: Annotated[int, Field(gt=0)]
+
+
+class RecordsFilter(BaseModel):
+  startDate: str
+  endDate: str 
+
+
 @app.post("/record")
 async def create_record(body: RecordCreate, access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
@@ -87,6 +89,7 @@ async def create_record(body: RecordCreate, access_token: Annotated[str | None, 
   with Session(engine) as session:
     new_record = Record(
       user_id=user_id,
+      task_id=body.task_id,
       date=body.date,
       minutes=body.minutes,
       comment=body.comment,
@@ -147,6 +150,7 @@ async def update_record(body: RecordUpdate, access_token: Annotated[str | None, 
     record.date = body.date
     record.minutes = body.minutes
     record.comment = body.comment
+    record.task_id = body.task_id
     session.commit()
 
   return {
@@ -174,7 +178,7 @@ async def get_records(access_token: Annotated[str | None, Header()] = None):
 
 
 @app.get("/record")
-async def get_record(recordId: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
+async def get_record(record_id: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
   user_id = await get_user_id(access_token)
   if not user_id:
     return {
@@ -183,13 +187,13 @@ async def get_record(recordId: Annotated[int, Field(gt=0)], access_token: Annota
     }
   
   with Session(engine) as session:
-    stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False, Record.id == recordId)
+    stmt = select(Record).where(Record.user_id == user_id, Record.deleted == False, Record.id == record_id)
     try: 
       record = session.scalars(stmt).one()
     except (NoResultFound, MultipleResultsFound):
       return {
         "success": False,
-        "message": "Wrong userId, recordId, or record is deleted."
+        "message": "Wrong user_id, record_id, or record is deleted."
       }
 
   return {
@@ -221,8 +225,337 @@ async def get_records_for_period(body: RecordsFilter, access_token: Annotated[st
       Record.date <= end_date,
     )
     records = session.scalars(stmt).all()
+    mapped_records = [{
+      'id': r.id,
+      'user_id': r.user_id,
+      'minutes': r.minutes,
+      'date': r.date,
+      'comment': r.comment,
+      'task_id': r.task_id,
+      'task_title': r.task.title,
+    } for r in records]
 
   return {
     "success": True,
-    "data": records
+    "data": mapped_records,
+  }
+
+
+# Projects API
+
+class ProjectCreate(BaseModel):
+  title: str
+  description: str
+  code: str
+
+class ProjectUpdate(ProjectCreate):
+  project_id: Annotated[int, Field(gt=0)]
+
+
+@app.get("/projects")
+async def get_projects(access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Project).where(Project.user_id == user_id, Project.deleted == False)
+    projects = session.scalars(stmt).all()
+
+  return {
+    "success": True,
+    "data": projects
+  }
+
+
+@app.get("/project")
+async def get_project(project_id: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Project).where(Project.user_id == user_id, Project.deleted == False, Project.id == project_id)
+    try: 
+      project = session.scalars(stmt).one()
+    except (NoResultFound, MultipleResultsFound):
+      return {
+        "success": False,
+        "message": "Wrong user_id, project_id, or project is deleted."
+      }
+
+  return {
+    "success": True,
+    "data": project
+  }
+
+
+@app.post("/project")
+async def create_project(body: ProjectCreate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Project).where(Project.user_id == user_id, 
+                                 Project.deleted == False,
+                                 Project.code == body.code)
+    projects = session.scalars(stmt).all()
+    if len(projects):
+      return {
+        "success": False,
+        "message": "Duplicate project codes are prohibited for not deleted projects."
+      }
+
+
+  with Session(engine) as session:
+      new_project = Project(
+        user_id=user_id,
+        description=body.description,
+        title=body.title,
+        code=body.code,
+      )
+      session.add(new_project)
+      session.commit()
+
+  return {
+    "success": True, 
+  }
+
+
+@app.delete("/project")
+async def delete_project(project_id: int, access_token: Annotated[str | None, Header()] = None):
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Project).where(Project.id == project_id, Project.user_id == user_id)
+    try:
+      project = session.scalars(stmt).one()
+    except NoResultFound:
+      return {
+        "success": False,
+        "message": "Wrong project_id or user_id.",
+      }
+    project.deleted = True
+    session.commit()
+
+  return {
+    "success": True, 
+  }
+
+
+@app.patch("/project")
+async def update_project(body: ProjectUpdate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Project).where(Project.id == body.project_id, Project.user_id == user_id, Project.deleted == False)
+    try:
+      project = session.scalars(stmt).one()
+    except NoResultFound:
+      return {
+        "success": False,
+        "message": "Wrong project_id or user_id, or project is deleted.",
+      }
+
+    project = None
+    stmt = select(Project).where(Project.code == body.code, Project.user_id == user_id, Project.deleted == False)
+    try:
+      project = session.scalars(stmt).one()
+    except NoResultFound:
+      pass
+
+    if project:
+      return {
+        "success": False,
+        "message": "Project with the same code and project_id and user_id already exists and not deleted. Not deleted projects with the same code are prohibited.",
+      }
+    
+    project.title = body.title
+    project.description = body.description
+    project.code = body.code
+    session.commit()
+
+  return {
+    "success": True, 
+  }
+
+
+# Tasks API
+
+class TaskCreate(BaseModel):
+  project_id: Annotated[int, Field(gt=0)]
+  title: str
+  description: str
+  code: str
+
+class TaskUpdate(ProjectCreate):
+  task_id: Annotated[int, Field(gt=0)]
+
+
+@app.get("/tasks")
+async def get_tasks(access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Task).where(Task.user_id == user_id, Task.deleted == False)
+    tasks = session.scalars(stmt).all()
+
+  return {
+    "success": True,
+    "data": tasks
+  }
+
+
+@app.get("/task")
+async def get_task(task_id: Annotated[int, Field(gt=0)], access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Task).where(Task.user_id == user_id, Task.deleted == False, Task.id == task_id)
+    try: 
+      task = session.scalars(stmt).one()
+    except (NoResultFound, MultipleResultsFound):
+      return {
+        "success": False,
+        "message": "Wrong userId, taskId, or task is deleted."
+      }
+
+  return {
+    "success": True,
+    "data": task
+  }
+
+
+@app.post("/task")
+async def create_task(body: TaskCreate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Task).where(Task.user_id == user_id, 
+                              Task.deleted == False,
+                              Task.code == body.code)
+    tasks = session.scalars(stmt).all()
+    if len(tasks):
+      return {
+        "success": False,
+        "message": "Duplicate task codes are prohibited for not deleted tasks."
+      }
+
+
+  with Session(engine) as session:
+      new_task = Task(
+        user_id=user_id,
+        description=body.description,
+        title=body.title,
+        code=body.code,
+        project_id=body.project_id
+      )
+      session.add(new_task)
+      session.commit()
+
+  return {
+    "success": True, 
+  }
+
+
+@app.delete("/task")
+async def delete_task(task_id: int, access_token: Annotated[str | None, Header()] = None):
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Task).where(Task.id == task_id, Task.user_id == user_id)
+    try:
+      task = session.scalars(stmt).one()
+    except NoResultFound:
+      return {
+        "success": False,
+        "message": "Wrong project_id or user_id.",
+      }
+    task.deleted = True
+    session.commit()
+
+  return {
+    "success": True, 
+  }
+
+
+@app.patch("/task")
+async def update_task(body: TaskUpdate, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+  
+  with Session(engine) as session:
+    stmt = select(Task).where(Task.id == body.task_id, Task.user_id == user_id, Task.deleted == False)
+    try:
+      task = session.scalars(stmt).one()
+    except NoResultFound:
+      return {
+        "success": False,
+        "message": "Wrong task_id or user_id, or task is deleted.",
+      }
+
+    task = None
+    stmt = select(Task).where(Task.code == body.code, Task.user_id == user_id, Task.deleted == False)
+    try:
+      task = session.scalars(stmt).one()
+    except NoResultFound:
+      pass
+
+    if task:
+      return {
+        "success": False,
+        "message": "Task with the same code and task_id and user_id already exists and not deleted. Not deleted tasks with the same code are prohibited.",
+      }
+    
+    task.title = body.title
+    task.description = body.description
+    task.code = body.code
+    session.commit()
+
+  return {
+    "success": True, 
   }

@@ -38,9 +38,10 @@ class Record(TimestampMixin, Base):
 class Project(TimestampMixin, Base):
   __tablename__ = 'project'
   id: Mapped[int] = mapped_column(primary_key=True)
+  user_id: Mapped[int] = mapped_column(nullable=False)
   deleted: Mapped[bool] = mapped_column(default=False)
   title: Mapped[str] = mapped_column(String(255))
-  code: Mapped[str] = mapped_column(String(255), unique=True)
+  code: Mapped[str] = mapped_column(String(255))
   description: Mapped[str] = mapped_column(Text)
   tasks: Mapped[List["Task"]] = relationship(
     back_populates="project",
@@ -54,9 +55,10 @@ class Project(TimestampMixin, Base):
 class Task(TimestampMixin, Base):
   __tablename__ = 'task'
   id: Mapped[int] = mapped_column(primary_key=True)
+  user_id: Mapped[int] = mapped_column(nullable=False)
   deleted: Mapped[bool] = mapped_column(default=False)
   title: Mapped[str] = mapped_column(String(255))
-  code: Mapped[str] = mapped_column(String(255), unique=True)
+  code: Mapped[str] = mapped_column(String(255))
   description: Mapped[str] = mapped_column(Text)
   project_id: Mapped[int] = mapped_column(ForeignKey("project.id"))
   project: Mapped["Project"] = relationship(back_populates="tasks")
