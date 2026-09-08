@@ -10,13 +10,16 @@
     type="password" 
     [(value)]="password"
   />
-  <button 
-    class="bg-green-300 rounded-2xl p-2 uppercase"
-    (click)="login()"
-  >submit</button>
-  <a 
-    class="underline"
-    [routerLink]="['/signup']">
-    Sign up
- </a>
+  <div class="flex justify-between w-full gap-8">
+    <a 
+      class="underline"
+      [routerLink]="['/signup']">
+      Sign up
+  </a>
+
+    <div 
+      class="underline select-none cursor-pointer"
+      (click)="login()"
+    >Submit</div>
+  </div>
 </div>
