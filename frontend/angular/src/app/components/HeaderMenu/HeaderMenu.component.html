@@ -1,10 +1,55 @@
 <div class="flex justify-center">
-  <div class="flex justify-between py-2 sm:px-16 max-w-[1920px] w-full">
-    <div class="text-2xl">Timesheets</div>
-    <div
-      class="cursor-pointer"
-      (click)="signout()">
-      <svg lucideLogOut [size]="32" color="black" [strokeWidth]="1" title="Logout"></svg>
+  <div class="sm:px-16 max-w-[1920px] w-full">
+    <div class="hidden sm:flex justify-between py-2 w-full place-items-end gap-4">
+      <div class="flex gap-4 place-items-end">
+        <a 
+          class="text-2xl"
+          [routerLink]="['/timetable']">
+          Timesheets
+        </a>
+        <a 
+          class="underline"
+          [routerLink]="['/timetable']">
+          Timetable
+        </a>
+        <a 
+          class="underline"
+          [routerLink]="['/projects']">
+          Projects
+        </a>
+      </div>
+      <div
+        class="cursor-pointer underline select-none"
+        (click)="signout()">
+        Sign out
+      </div>
+    </div>
+    
+    <div class="flex sm:hidden flex-col gap-4">
+      <div class="flex gap-4 w-full place-items-end justify-between">
+        <a 
+          class="text-2xl"
+          [routerLink]="['/timetable']">
+          Timesheets
+        </a>
+        <div
+          class="cursor-pointer underline select-none"
+          (click)="signout()">
+          Sign out
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <a 
+          class="underline"
+          [routerLink]="['/timetable']">
+          Timetable
+        </a>
+        <a 
+          class="underline"
+          [routerLink]="['/projects']">
+          Projects
+        </a>
+      </div>
     </div>
   </div>
 </div>

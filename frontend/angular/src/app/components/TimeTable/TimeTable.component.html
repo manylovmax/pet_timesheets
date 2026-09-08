@@ -1,24 +1,20 @@
 <div>
-
   <div class="hidden sm:flex  justify-between">
     <div>
       <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
     </div>
-    <div class="flex flex-row-reverse pb-4 gap-2">
-      <div
-        class="cursor-pointer p-2 underline select-none" 
-        (click)="goToOldLayout()"
-      >Go to old layout</div>
-      <div
-        class="cursor-pointer p-2 underline select-none" 
-        (click)="goToCreate()"
-      >Add a record</div>
+    <div class="flex flex-row-reverse pb-4 gap-4 items-end">
+      <a 
+        class="underline"
+        [routerLink]="['/record-create']">
+        Add a record
+      </a>
       <div 
-        class="cursor-pointer p-2 select-none underline"
+        class="cursor-pointer select-none underline"
         (click)="goToNextWeek()"  
       >Later</div>
       <div 
-        class="cursor-pointer p-2 select-none underline"
+        class="cursor-pointer select-none underline"
         (click)="goToPreviousWeek()"  
       >Earlier</div>
     </div>
@@ -28,10 +24,6 @@
       <div class="p-2 text-2xl">{{ weekDaysPeriodString }}</div>
     </div>
     <div class="flex flex-row-reverse pb-4 gap-2">
-      <div
-        class="cursor-pointer p-2 underline select-none" 
-        (click)="goToOldLayout()"
-      >Go to old layout</div>
       <div
         class="cursor-pointer p-2 underline select-none" 
         (click)="goToCreate()"
@@ -69,6 +61,7 @@
           class="bg-gray-100 p-2 rounded-xl cursor-pointer"
           (click)="onEdit(record.id)"  
         >
+          <div>task: {{ record.task_title }}</div>
           <div>minutes: {{ record.minutes }}</div>
           <div>{{ record.comment }}</div>
         </div>
@@ -97,6 +90,12 @@
       (click)="onView()"  
             ></svg>
     <div>Update record</div>
+    <Dropdown
+      label="Task"
+      [required]="true"
+      [options]="taskOptions()"
+      [value]="selectedTask"
+    />
     <InputComponent 
       type="number"
       label="Minutes"
@@ -106,15 +105,15 @@
       label="Comment"
       [(value)]="comment"
     />
-    <div class="flex gap-4">
-      <button 
-        class="bg-red-300 rounded-2xl p-2 uppercase cursor-pointer"
+    <div class="flex gap-4 justify-between w-full">
+      <div 
+        class="underline cursor-pointer select-none"
         (click)="onDelete()"
-      >delete</button>
-      <button 
-        class="bg-green-300 rounded-2xl p-2 uppercase cursor-pointer"
+      >Delete</div>
+      <div 
+        class="underline cursor-pointer select-none"
         (click)="onSave()"
-      >submit</button>
+      >Update</div>
     </div>
   </div>
 </div>

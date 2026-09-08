@@ -1,0 +1,36 @@
+<div class="flex flex-col relative">
+  <label
+    class="pl-2" 
+    [for]="id">{{ label() || '' }}</label>
+  <div class="relative">
+    <input 
+      class="bg-white rounded-2xl px-2 mb-1"
+      [id]="id"
+      type="text"
+      [value]="inputText()"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()" 
+    >
+    @if(required() && !value()) {
+      <div class="text-red-400 px-2">This field is required</div>
+    }
+
+    @if (value()) {
+    <div class="absolute rounded bg-gray-200 px-1 left-2 top-0">{{ value()?.title }}</div>
+    }
+
+    <div class="absolute z-10 flex-col bg-white rounded top-8 left-0 w-full"
+      [class]="{
+        'hidden': !listVisible,
+        'flex': listVisible 
+      }"
+    >
+      @for(option of visibleOptions; track option.id) {
+        <div 
+        class="hover:bg-gray-100 px-2"
+        (mousedown)="onSelect(option.id)">{{ option.title }}</div>
+      }
+    </div>
+  </div>
+</div>

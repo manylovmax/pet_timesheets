@@ -6,18 +6,21 @@ export interface TableColumn {
 };
 
 @Component({
-  selector: 'TableComponent',
-  templateUrl: './TableComponent.component.html',
-  styleUrl: './TableComponent.component.css',
+  selector: 'TasksTableComponent',
+  templateUrl: './TasksTableComponent.component.html',
+  styleUrl: './TasksTableComponent.component.css',
   imports: [],
 })
-export class TableComponent {
+export class TasksTableComponent {
   columns = input<TableColumn[]>([]);
+  openObjectPageColumnAttribute = input<string>('');
   rows = input<Record<string, string>[]>([]);
   deleteButton = input<boolean>(false);
   updateButton = input<boolean>(false);
   update = output<number>(); 
   delete = output<number>();
+  open = output<number>();
+
   colspan = computed(() => {
     const columnsLength = this.columns().length;
     const actionsColumnPresent = this.deleteButton() || this.updateButton();
@@ -30,5 +33,9 @@ export class TableComponent {
 
   onDelete(index: number) {
     this.delete.emit(index);
+  }
+
+  onOpen(index: number) {
+    this.open.emit(index);
   }
 }

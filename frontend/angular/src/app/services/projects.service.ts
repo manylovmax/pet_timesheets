@@ -3,23 +3,21 @@ import config from "../constants";
 import { Service } from "@angular/core";
 
 
-export interface TimesheetsRecord {
+export interface TimesheetsProject {
   id: number,
   user_id: number,
-  minutes: number,
-  date: string,
-  comment: string,
+  title: string,
+  description: string,
+  code: string,
   deleted: boolean,
-  task_id: number,
-  task_title?: string,
 }
 
 
 @Service()
-export class RecordsService {
-  async getAllRecords(): Promise<TimesheetsRecord[]> {
+export class ProjectsService {
+  async getAll(): Promise<TimesheetsProject[]> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.get(config.api.records, {
+    const result = await apiClient.get(config.api.projects, {
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json'
@@ -35,14 +33,13 @@ export class RecordsService {
     return [];
   }
 
-  async createRecord(props: {
-    task_id: number,
-    minutes: number,
-    date: string,
-    comment: string,
+  async create(props: {
+    title: string,
+    code: string,
+    description: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.post(config.api.record,
+    const result = await apiClient.post(config.api.project,
       props,
       {
         headers: {
@@ -62,11 +59,11 @@ export class RecordsService {
   }
 
 
-  async deleteRecord(recordId: number): Promise<boolean> {
+  async delete(project_id: number): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.delete(config.api.record, {
+    const result = await apiClient.delete(config.api.project, {
       params: {
-        record_id: recordId,
+        project_id,
       },
       headers: {
         'access-token': accessToken,
@@ -80,15 +77,14 @@ export class RecordsService {
     return result?.data?.success;
   }
 
-  async updateRecord(params: {
-    task_id: number,
-    record_id: number,
-    minutes: number,
-    date: string,
-    comment: string,
+  async update(params: {
+    project_id: number,
+    title: string,
+    description: string,
+    code: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.patch(config.api.record, 
+    const result = await apiClient.patch(config.api.project, 
       params,
       {
       headers: {
@@ -103,11 +99,11 @@ export class RecordsService {
     return result?.data?.success;
   }
 
-  async getRecord(record_id: number): Promise<TimesheetsRecord | null> {
+  async get(project_id: number): Promise<TimesheetsProject | null> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.get(config.api.record, {
+    const result = await apiClient.get(config.api.project, {
       params: {
-        record_id,
+        project_id,
       },
       headers: {
         'access-token': accessToken,
@@ -123,27 +119,7 @@ export class RecordsService {
 
     return null;
   }
-
-  async getRecordsForPeriod(startDate: string, endDate: string): Promise<TimesheetsRecord[]> {
-    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.post(config.api.recordsForPeriod, 
-    { startDate, endDate },  
-    {
-      headers: {
-        'access-token': accessToken,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (result?.data?.success) {
-      return result?.data?.data;
-    } else {
-      alert(result?.data?.message);
-    }
-
-    return [];
-  }
 }
 
 
-export default RecordsService;
+export default ProjectsService;

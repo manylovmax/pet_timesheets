@@ -1,12 +1,11 @@
 import { Component, inject } from "@angular/core";
 import AuthService from "../../services/auth.service";
-import  { LucideLogOut } from '@lucide/angular';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'HeaderMenu',
   templateUrl: './HeaderMenu.component.html',
-  imports: [LucideLogOut],
+  imports: [RouterLink],
 })
 export class HeaderMenu {
   private readonly router = inject(Router); 

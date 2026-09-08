@@ -17,7 +17,16 @@
       <tr>
         @for (col of columns(); track col.attribute) {
         <td>
+          @if (col.attribute === openObjectPageColumnAttribute()) {
+            <div 
+              class="underline cursor-pointer"
+              (click)="onOpen($index)"
+              >
+              {{ row[col.attribute] || '' }}
+            </div>
+          } @else {
           {{ row[col.attribute] || '' }}
+          }
         </td>
         }
         @if (updateButton() || deleteButton()) {

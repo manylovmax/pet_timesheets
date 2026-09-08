@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, signal, WritableSignal } from "@angular/core";
 import RecordsService, { TimesheetsRecord } from "../../services/records.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { TextareaComponent } from "../Textarea/Textarea.component";
 import { InputComponent } from "../Input/Input.component";
 import  { LucideX } from '@lucide/angular'
+import { DropdownComponent, DropdownItem } from "../Dropdown/Dropdown.component";
+import TasksService from "../../services/tasks.service";
 
 interface weekDay {
   title: string;
@@ -20,11 +22,13 @@ interface weekDay {
   selector: 'TimeTable',
   templateUrl: './TimeTable.component.html',
   styleUrl: './TimeTable.component.css',
-  imports: [TextareaComponent, InputComponent, LucideX],
+  imports: [TextareaComponent, InputComponent, LucideX, RouterLink, DropdownComponent],
 })
 export class TimeTable implements OnInit {
   private readonly router = inject(Router);
   private readonly recordsService = inject(RecordsService);
+  private readonly tasksService = inject(TasksService);
+
   records: TimesheetsRecord[] = [];
   currentDate = new Date();
   weekDays: WritableSignal<weekDay[]> = signal([]);
@@ -34,11 +38,17 @@ export class TimeTable implements OnInit {
   minutes: WritableSignal<string> = signal('1');
   date: WritableSignal<string> = signal('');
   comment: WritableSignal<string> = signal('');
+  selectedTask: WritableSignal<DropdownItem | null> = signal(null);
+  taskOptions: WritableSignal<DropdownItem[]> = signal([]);
   
-  ngOnInit(): void {
+  async ngOnInit() {
     this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay());
     this.initializeWeekdays(this.currentDate);
     this.refreshRecords();
+    const tasks = await this.tasksService.getAll();
+    if (tasks.length) {
+      this.taskOptions.set(tasks.map(t => ({id: String(t.id), title: t.title})));
+    }
   }
 
   private initializeWeekdays(startDay: Date) {
@@ -91,6 +101,8 @@ export class TimeTable implements OnInit {
       this.minutes.set(String(this.editingRecord?.minutes));
       this.date.set(String(this.editingRecord?.date));
       this.comment.set(String(this.editingRecord?.comment));
+      const seletedTask = this.taskOptions().find(to => to.id === String(this.editingRecord?.task_id));
+      this.selectedTask.set(seletedTask ? seletedTask : null);
       this.modalOpen = true;
     }
   }
@@ -104,7 +116,8 @@ export class TimeTable implements OnInit {
       return;
 
     const result = await this.recordsService.updateRecord({
-      recordId: this.editingRecord.id,
+      task_id: this.editingRecord.task_id,
+      record_id: this.editingRecord.id,
       minutes: Number(this.minutes()), 
       date: this.date(),
       comment: this.comment(),
@@ -145,5 +158,9 @@ export class TimeTable implements OnInit {
 
   goToOldLayout() {
     this.router.navigate(['/records']);
+  }
+
+  goToProjects() {
+    this.router.navigate(['/projects']);
   }
 }
