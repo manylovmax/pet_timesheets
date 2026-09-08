@@ -24,7 +24,7 @@
     >
       @for(option of visibleOptions; track option.id) {
         <div 
-        class="hover:bg-gray-100 px-2"
+        class="hover:bg-gray-100 px-2 cursor-pointer"
         (mousedown)="onSelect(option.id)">{{ option.title }}</div>
       }
     </div>
