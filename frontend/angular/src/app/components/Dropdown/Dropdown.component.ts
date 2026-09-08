@@ -1,4 +1,4 @@
-import { Component, Input, input, OnChanges, signal, SimpleChanges, WritableSignal } from "@angular/core";
+import { Component, effect, Input, input, OnChanges, OnInit, signal, SimpleChanges, WritableSignal } from "@angular/core";
 import { v4 as uuidv4 } from 'uuid';
 
 export interface DropdownItem {
@@ -16,26 +16,49 @@ export class DropdownComponent implements OnChanges {
   label = input<string>('');
   required = input<boolean>(true);
   id = uuidv4();
-  inputText = signal('');
+  innerHTML = signal('');
   visibleOptions: DropdownItem[] = this.options();
   listVisible: boolean = false;
+
+  constructor() {
+    effect(() => {
+      const selected = this.options().find(o => o.id === this.value()?.id);
+      if (selected) {
+        this.innerHTML.set('<div class="rounded bg-gray-200 px-1 w-fit">' + selected.title + '</div>');
+        this.listVisible = false;
+      } else {
+        this.innerHTML.set('');
+      }
+    });
+
+    effect(()=> {
+      const text = this.innerHTML();
+      const cleanString = text.replace(/[\r\n]/g, "");
+      if (!cleanString) {
+        this.listVisible = true;
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['options']) {
       this.visibleOptions = this.options();
       this.value.set(null);
-      this.inputText.set('');
+      this.innerHTML.set('');
     }
   }
 
   onInput(event: InputEvent) {
     event.stopPropagation(); 
-    const element = event.target as HTMLInputElement;
-    const newValue = String(element.value);
-    this.inputText.set(newValue);
-    this.value.set(null);
-    if (newValue.length)
-      this.visibleOptions = this.options().filter(o => o.title.includes(newValue));
+    const element = event.target as HTMLDivElement;
+    const newValue = String(element.innerText);
+    if (this.value()) {
+      this.value.set(null);
+      this.innerHTML.set('');
+    }
+    const cleanString = newValue.replace(/[\r\n]/g, "");
+    if (cleanString.length)
+      this.visibleOptions = this.options().filter(o => o.title.includes(cleanString));
     else
       this.visibleOptions = this.options();
   }
@@ -52,8 +75,7 @@ export class DropdownComponent implements OnChanges {
     const selected = this.options().find(o => o.id === id);
     if (selected) {
       this.value.set(selected);
-      this.inputText.set(selected.title);
     }
-    this.onBlur();
+    this.listVisible = false;
   }
 }

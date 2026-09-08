@@ -1,26 +1,22 @@
-<div class="flex flex-col relative">
+<div class="flex flex-col relative w-full">
   <label
     class="pl-2" 
     [for]="id">{{ label() || '' }}</label>
-  <div class="relative">
-    <input 
-      class="bg-white rounded-2xl px-2 mb-1"
-      [id]="id"
-      type="text"
-      [value]="inputText()"
+  <div class="relative w-full">
+    <div 
+      contenteditable="true" 
+      class="bg-white rounded-2xl px-2 mb-1 w-full h-6 min-w-[247px]"
       (input)="onInput($event)"
-      (focus)="onFocus()"
-      (blur)="onBlur()" 
-    >
+      (focusin)="onFocus()"
+      (blur)="onBlur()"
+      [innerHTML]="innerHTML()"
+      (keydown.enter)="$event.preventDefault()"
+    ></div>
     @if(required() && !value()) {
       <div class="text-red-400 px-2">This field is required</div>
     }
 
-    @if (value()) {
-    <div class="absolute rounded bg-gray-200 px-1 left-2 top-0">{{ value()?.title }}</div>
-    }
-
-    <div class="absolute z-10 flex-col bg-white rounded top-8 left-0 w-full"
+    <div class="absolute z-10 flex-col bg-white rounded top-6 left-0 w-full"
       [class]="{
         'hidden': !listVisible,
         'flex': listVisible 
