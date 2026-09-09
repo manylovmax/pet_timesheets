@@ -58,7 +58,7 @@
       <div class="flex-col gap-4 pt-4">
         @for(record of weekDay.records; track record.id) {
         <div 
-          class="bg-gray-100 p-2 rounded-xl cursor-pointer"
+          class="p-2 rounded-xl cursor-pointer border-gray-200 border-2"
           (click)="onEdit(record.id)"  
         >
           <div>task: {{ record.task_title }}</div>
