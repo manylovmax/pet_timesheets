@@ -16,7 +16,7 @@ export class RecordCreatePage implements OnInit {
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
 
-  minutes: WritableSignal<string> = signal('1');
+  minutes: WritableSignal<number> = signal(0);
   date: WritableSignal<string> = signal('');
   comment: WritableSignal<string> = signal('');
   selectedTask: WritableSignal<DropdownItem | null> = signal(null);
@@ -37,7 +37,7 @@ export class RecordCreatePage implements OnInit {
 
     const result = await this.recordsService.createRecord({
       task_id: Number(this.selectedTask()?.id),
-      minutes: Number(this.minutes()), 
+      minutes: this.minutes(), 
       date: this.date(), 
       comment: this.comment()
     });

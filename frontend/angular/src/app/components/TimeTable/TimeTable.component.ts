@@ -2,10 +2,11 @@ import { Component, inject, OnInit, signal, WritableSignal } from "@angular/core
 import RecordsService, { TimesheetsRecord } from "../../services/records.service";
 import { Router, RouterLink } from "@angular/router";
 import { TextareaComponent } from "../Textarea/Textarea.component";
-import { InputComponent } from "../Input/Input.component";
 import  { LucideX } from '@lucide/angular'
 import { DropdownComponent, DropdownItem } from "../Dropdown/Dropdown.component";
 import TasksService from "../../services/tasks.service";
+import { TimeInputComponent } from "../TimeInput/TimeInput.component";
+import { minutesToString } from "../../utils/time";
 
 interface weekDay {
   title: string;
@@ -22,7 +23,7 @@ interface weekDay {
   selector: 'TimeTable',
   templateUrl: './TimeTable.component.html',
   styleUrl: './TimeTable.component.css',
-  imports: [TextareaComponent, InputComponent, LucideX, RouterLink, DropdownComponent],
+  imports: [TextareaComponent, LucideX, RouterLink, DropdownComponent, TimeInputComponent],
 })
 export class TimeTable implements OnInit {
   private readonly router = inject(Router);
@@ -35,11 +36,12 @@ export class TimeTable implements OnInit {
   weekDaysPeriodString: string = '';
   modalOpen: boolean = false;
   editingRecord: TimesheetsRecord | undefined;
-  minutes: WritableSignal<string> = signal('1');
+  minutes: WritableSignal<number> = signal(0);
   date: WritableSignal<string> = signal('');
   comment: WritableSignal<string> = signal('');
   selectedTask: WritableSignal<DropdownItem | null> = signal(null);
   taskOptions: WritableSignal<DropdownItem[]> = signal([]);
+  minutesToString = minutesToString;
   
   async ngOnInit() {
     this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay());
@@ -98,7 +100,7 @@ export class TimeTable implements OnInit {
   onEdit(recordId: number) {
     this.editingRecord = this.records.find(r => r.id === recordId);
     if (this.editingRecord) {
-      this.minutes.set(String(this.editingRecord?.minutes));
+      this.minutes.set(this.editingRecord?.minutes);
       this.date.set(String(this.editingRecord?.date));
       this.comment.set(String(this.editingRecord?.comment));
       const seletedTask = this.taskOptions().find(to => to.id === String(this.editingRecord?.task_id));
@@ -107,7 +109,7 @@ export class TimeTable implements OnInit {
     }
   }
 
-  onView() {
+  closeModal() {
     this.modalOpen = false;
   }
   
@@ -118,7 +120,7 @@ export class TimeTable implements OnInit {
     const result = await this.recordsService.updateRecord({
       task_id: this.editingRecord.task_id,
       record_id: this.editingRecord.id,
-      minutes: Number(this.minutes()), 
+      minutes: this.minutes(), 
       date: this.date(),
       comment: this.comment(),
     });

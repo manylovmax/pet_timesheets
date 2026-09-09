@@ -1,0 +1,16 @@
+<div class="flex flex-col">
+  <label
+    class="pl-2" 
+    [for]="id">{{ label() || '' }}</label>
+  <input 
+    class="bg-white rounded-2xl px-2 mb-1"
+    [id]="id"
+    type="text"
+    spellcheck="false"
+    [value]="inputText"
+    (input)="onInput($event)"
+  >
+  @if(!isValid) {
+  <div class="text-red-400 px-2">{{ errorMessage }}</div>
+  }
+</div>

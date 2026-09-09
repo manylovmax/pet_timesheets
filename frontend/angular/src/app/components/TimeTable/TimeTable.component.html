@@ -58,11 +58,11 @@
       <div class="flex-col gap-4 pt-4">
         @for(record of weekDay.records; track record.id) {
         <div 
-          class="p-2 rounded-xl cursor-pointer border-gray-200 border-2"
+          class="p-2 rounded-xl cursor-pointer border-gray-200 border-2 bg-white"
           (click)="onEdit(record.id)"  
         >
           <div>task: {{ record.task_title }}</div>
-          <div>minutes: {{ record.minutes }}</div>
+          <div>{{ minutesToString(record.minutes) }}</div>
           <div>{{ record.comment }}</div>
         </div>
         }
@@ -75,19 +75,19 @@
 
 <div class="flex items-center justify-center z-50 fixed inset-0"
   [class]="modalOpen ? 'block' : 'hidden'"
-  (click)="onView()"
+  (click)="closeModal()"
 >
   <div class="fixed inset-0 transition-opacity backdrop-blur-md"></div>
   <div 
     (click)="$event.stopPropagation()"
-    class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center z-10 relative">
+    class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center z-10 relative w-[360px] sm:w-[400px]">
     <svg lucideX
       class="cursor-pointer absolute top-2 right-2" 
       [size]="32" 
       color="black" 
       [strokeWidth]="1" 
       title="Update"
-      (click)="onView()"  
+      (click)="closeModal()"  
             ></svg>
     <div>Update record</div>
     <Dropdown
@@ -96,9 +96,8 @@
       [options]="taskOptions()"
       [value]="selectedTask"
     />
-    <InputComponent 
-      type="number"
-      label="Minutes"
+    <TimeInputComponent 
+      label="Spent time"
       [(value)]="minutes"
     />
     <TextareaComponent 

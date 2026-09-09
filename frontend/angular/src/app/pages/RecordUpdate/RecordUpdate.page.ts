@@ -17,7 +17,7 @@ export class RecordUpdatePage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly tasksService = inject(TasksService);
 
-  minutes: WritableSignal<string> = signal('1');
+  minutes: WritableSignal<number> = signal(0);
   date: WritableSignal<string> = signal('');
   comment: WritableSignal<string> = signal('');
   selectedTask: WritableSignal<DropdownItem | null> = signal(null);
@@ -32,7 +32,7 @@ export class RecordUpdatePage implements OnInit {
   async ngOnInit(): Promise<void> {
     this.record = await this.recordsService.getRecord(this.id);
     if (this.record) {
-      this.minutes.set(String(this.record?.minutes));
+      this.minutes.set(this.record?.minutes);
       this.date.set(String(this.record?.date));
       this.comment.set(String(this.record?.comment));
     }
@@ -48,7 +48,7 @@ export class RecordUpdatePage implements OnInit {
     const result = await this.recordsService.updateRecord({
       task_id: Number(this.selectedTask()?.id),
       record_id: this.id,
-      minutes: Number(this.minutes()), 
+      minutes: this.minutes(), 
       date: this.date(),
       comment: this.comment(),
     });

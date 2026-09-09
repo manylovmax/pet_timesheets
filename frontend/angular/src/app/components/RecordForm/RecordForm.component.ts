@@ -3,17 +3,18 @@ import { InputComponent } from "../Input/Input.component";
 import { RouterLink } from "@angular/router";
 import { TextareaComponent } from "../Textarea/Textarea.component";
 import { DropdownComponent, DropdownItem } from "../Dropdown/Dropdown.component";
+import { TimeInputComponent } from "../TimeInput/TimeInput.component";
 
 
 @Component({
   selector: 'RecordForm',
   templateUrl: './RecordForm.component.html',
-  imports: [InputComponent, RouterLink, TextareaComponent, DropdownComponent],
+  imports: [InputComponent, RouterLink, TextareaComponent, DropdownComponent, TimeInputComponent],
 })
 export class RecordForm {
   type = input<'create' | 'update'>('create');
   @Input() task_id: WritableSignal<number> = signal(0);
-  @Input() minutes: WritableSignal<string> = signal('');
+  @Input() minutes: WritableSignal<number> = signal(0);
   @Input() date: WritableSignal<string> = signal('');
   @Input() comment: WritableSignal<string> = signal('');
   @Input() task: WritableSignal<DropdownItem | null> = signal(null);
