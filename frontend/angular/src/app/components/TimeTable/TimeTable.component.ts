@@ -85,6 +85,7 @@ export class TimeTable implements OnInit {
     const weekDays = structuredClone(this.weekDays());
     for (let i = 0; i < weekDays.length; i++) {
       weekDays[i].records = [];
+      weekDays[i].totalMinutes = 0;
     }
     const startDate = weekDays[0].dateObj.toLocaleDateString('en-CA')
     const endDate = weekDays[weekDays.length - 1].dateObj.toLocaleDateString('en-CA')
