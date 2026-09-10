@@ -13,14 +13,14 @@
     </thead>
     @if (rows().length) {
     <tbody>
-      @for(row of rows(); track $index) {
+      @for(row of rows(); track $index; let rowIndex = $index) {
       <tr>
         @for (col of columns(); track col.attribute) {
         <td>
           @if (col.attribute === openObjectPageColumnAttribute()) {
             <div 
               class="underline cursor-pointer"
-              (click)="onOpen($index)"
+              (click)="onOpen(rowIndex)"
               >
               {{ row[col.attribute] || '' }}
             </div>
@@ -34,12 +34,12 @@
           <div class="flex gap-4 w-full justify-center">
             @if (updateButton()) {
               <div class="select-none cursor-pointer underline"
-                (click)="onUpdate($index)"  
+                (click)="onUpdate(rowIndex)"  
               >Update</div>
             }
             @if (deleteButton()) {
               <div class="select-none cursor-pointer underline"
-                (click)="onDelete($index)"  
+                (click)="onDelete(rowIndex)"  
               >Delete</div>
             }       
           </div>
