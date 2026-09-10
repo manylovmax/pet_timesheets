@@ -45,7 +45,7 @@
       class="p-2 border-gray-200 min-h-[60vh] min-w-[225px]"
       [class]="{
         'border-r-2': weekDay.index !== 6,
-        'bg-blue-100': weekDay.isToday
+        'bg-gray-100': weekDay.isToday
       }"
     >
       <div class="flex justify-between gap-8">
@@ -53,6 +53,7 @@
           <div>{{ weekDay.title }}</div>
           <div>{{ weekDay.date }}</div>
         </div>
+        <div>{{ minutesToString(weekDay.totalMinutes) }}</div>
       </div>
 
       <div class="flex-col gap-4 pt-4">

@@ -17,6 +17,7 @@ interface weekDay {
   index: number;
   records: TimesheetsRecord[];
   isToday: boolean;
+  totalMinutes: number;
 }
 
 @Component({
@@ -69,7 +70,8 @@ export class TimeTable implements OnInit {
         dateObj: date,
         index: i,
         records: [],
-        isToday: today.toLocaleDateString('en-CA') == date.toLocaleDateString('en-CA')
+        isToday: today.toLocaleDateString('en-CA') == date.toLocaleDateString('en-CA'),
+        totalMinutes: 0,
       });
     }
     this.weekDays.set(weekDays);
@@ -92,6 +94,7 @@ export class TimeTable implements OnInit {
       const weekDay = weekDays.find(wd => wd.dateObj.toLocaleDateString('en-CA') == record.date);
       if (weekDay) {
         weekDay.records.push(record);
+        weekDay.totalMinutes += record.minutes;
       }
     }
     this.weekDays.set(weekDays);
