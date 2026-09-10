@@ -42,13 +42,13 @@
   <div class="flex w-full overflow-x-auto">
     @for (weekDay of weekDays(); track weekDay.index) {
     <div 
-      class="p-2 border-gray-200 min-h-[60vh] min-w-[225px]"
+      class="p-2 border-gray-200 min-h-[60vh] w-[225px] min-w-[225px]"
       [class]="{
         'border-r-2': weekDay.index !== 6,
         'bg-gray-100': weekDay.isToday
       }"
     >
-      <div class="flex justify-between gap-8">
+      <div class="flex justify-between gap-8 mb-2">
         <div class="flex gap-4">
           <div>{{ weekDay.title }}</div>
           <div>{{ weekDay.date }}</div>
@@ -56,13 +56,13 @@
         <div>{{ minutesToString(weekDay.totalMinutes) }}</div>
       </div>
 
-      <div class="flex-col gap-4 pt-4">
+      <div class="flex flex-col gap-2">
         @for(record of weekDay.records; track record.id) {
         <div 
           class="p-2 rounded-xl cursor-pointer border-gray-200 border-2 bg-white"
           (click)="onEdit(record.id)"  
         >
-          <div>task: {{ record.task_title }}</div>
+          <div>{{ record.task_title }}</div>
           <div>{{ minutesToString(record.minutes) }}</div>
           <div>{{ record.comment }}</div>
         </div>
