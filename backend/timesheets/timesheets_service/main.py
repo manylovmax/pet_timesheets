@@ -6,7 +6,7 @@ import httpx
 from datetime import date as Date, datetime
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, func, and_
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from pydantic import BaseModel, Field
@@ -260,14 +260,42 @@ async def get_projects(access_token: Annotated[str | None, Header()] = None):
       "success": False,
       "message": "Wrong access-token header."
     }
-  
+
+  results = []
   with Session(engine) as session:
-    stmt = select(Project).where(Project.user_id == user_id, Project.deleted == False)
-    projects = session.scalars(stmt).all()
+    stmt = (
+        select(
+            Project.id, 
+            Project.title, 
+            Project.description, 
+            Project.code, 
+            func.sum(Record.minutes).label("total_minutes")
+        )
+        .outerjoin(Task, and_(
+            Project.id == Task.project_id,
+            Task.deleted == False
+        ))
+        .outerjoin(Record, and_(
+          Task.id == Record.task_id,
+          Record.deleted == False
+        ))
+        .where(
+          Project.user_id == user_id,
+          Project.deleted == False,
+        )
+        .group_by(Project.id)
+    )
+    results = session.execute(stmt).all()
 
   return {
     "success": True,
-    "data": projects
+    "data": [{
+        'id': row.id,
+        'title': row.title,
+        'description': row.description,
+        'code': row.code,
+        'total_minutes': row.total_minutes
+      } for row in results]
   }
 
 
@@ -558,4 +586,48 @@ async def update_task(body: TaskUpdate, access_token: Annotated[str | None, Head
 
   return {
     "success": True, 
+  }
+
+
+@app.get("/tasks-for-project")
+async def get_tasks(project_id: int, access_token: Annotated[str | None, Header()] = None):  
+  user_id = await get_user_id(access_token)
+  if not user_id:
+    return {
+      "success": False,
+      "message": "Wrong access-token header."
+    }
+
+  results = []
+  with Session(engine) as session:
+    stmt = (
+        select(
+            Task.id, 
+            Task.title, 
+            Task.description, 
+            Task.code, 
+            func.coalesce(func.sum(Record.minutes), 0).label("total_minutes")
+        )
+        .outerjoin(Record, and_(
+            Task.id == Record.task_id,
+            Record.deleted == False
+        ))
+        .where(
+          Task.project_id == project_id,
+          Task.user_id == user_id,
+          Task.deleted == False,
+        )
+        .group_by(Task.id)
+    )
+    results = [{
+      'id': row.id,
+      'title': row.title,
+      'description': row.description,
+      'code': row.code,
+      'total_minutes': row.total_minutes,
+    } for row in session.execute(stmt).all()]
+
+  return {
+    "success": True,
+    "data": results
   }
