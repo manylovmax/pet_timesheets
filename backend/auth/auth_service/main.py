@@ -20,7 +20,7 @@ from auth_service.models import User, Token
 os.environ['TZ'] = 'Europe/Moscow'
 time.tzset()
 
-email_pattern = re.compile("^[\w\d\.]+@[\w\d\.]+$")
+email_pattern = re.compile("^[\w\d_.+-]+@[\w\d_.+-]+\.[\w\d_.+-]+$")
 
 EMAIL_MIN_LENGTH = 6
 PASSWORD_MIN_LENGTH = 8
