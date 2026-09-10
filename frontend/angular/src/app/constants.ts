@@ -19,6 +19,7 @@ const config = {
     projects: apiHost + timesheetsBase + 'projects',
     task: apiHost + timesheetsBase + 'task',
     tasks: apiHost + timesheetsBase + 'tasks',
+    tasksForProject: apiHost + timesheetsBase + 'tasks-for-project',
   },
   constants: {
     accessTokenLSKey: 'access-token',

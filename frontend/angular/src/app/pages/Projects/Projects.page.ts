@@ -3,6 +3,7 @@ import { MainLayout } from "../../layouts/Main/Main.layout";
 import { Router, RouterLink } from "@angular/router";
 import ProjectsService, { TimesheetsProject } from "../../services/projects.service";
 import { ProjectsTableComponent, TableColumn } from "../../components/ProjectsTableComponent/ProjectsTableComponent.component";
+import { minutesToString } from "../../utils/time";
 
 @Component({
   selector: 'ProjectsPage',
@@ -26,6 +27,10 @@ export class ProjectsPage implements OnInit {
       label: 'Description',
       attribute: 'description',
     },
+    {
+      label: 'Spent time',
+      attribute: 'total_minutes',
+    },
   ];
   private projects: TimesheetsProject[] = [];
   mappedProjects: WritableSignal<Record<string, string>[]> = signal([]);
@@ -42,6 +47,7 @@ export class ProjectsPage implements OnInit {
       'title': r.title,
       'description': r.description,
       'code': r.code,
+      'total_minutes': r.total_minutes ? minutesToString(r.total_minutes) : '',
     })));
   }
 

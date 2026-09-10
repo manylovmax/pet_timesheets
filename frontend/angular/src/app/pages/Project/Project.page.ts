@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import ProjectsService, { TimesheetsProject } from "../../services/projects.service";
 import { TableColumn, TasksTableComponent } from "../../components/TasksTableComponent/TasksTableComponent.component";
 import TasksService, { TimesheetsTask } from "../../services/tasks.service";
+import { minutesToString } from "../../utils/time";
 
 @Component({
   selector: 'ProjectPage',
@@ -36,6 +37,10 @@ export class ProjectPage {
       label: 'Description',
       attribute: 'description',
     },
+    {
+      label: 'Spent time',
+      attribute: 'total_minutes',
+    },
   ];
   private tasks: TimesheetsTask[] = [];
   mappedTasks: WritableSignal<Record<string, string>[]> = signal([]);
@@ -56,13 +61,14 @@ export class ProjectPage {
 
 
   private async refreshTasks(): Promise<void> {
-    this.tasks = await this.tasksService.getAll();
+    this.tasks = await this.tasksService.getAllForProject(this.id);
     this.mappedTasks.set(this.tasks.map(r => ({
       'id': `${r.id}`,
       'user_id': `${r.user_id}`,
       'title': r.title,
       'description': r.description,
       'code': r.code,
+      'total_minutes': r.total_minutes ? minutesToString(r.total_minutes) : '',
     })));
   }
 

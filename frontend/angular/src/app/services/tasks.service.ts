@@ -11,6 +11,7 @@ export interface TimesheetsTask {
   description: string,
   code: string,
   deleted: boolean,
+  total_minutes?: number;
 }
 
 
@@ -120,6 +121,25 @@ export class TasksService {
     }
 
     return null;
+  }
+
+  async getAllForProject(project_id: number): Promise<TimesheetsTask[]> {
+    const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
+    const result = await apiClient.get(config.api.tasksForProject, {
+      params: { project_id },
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (result?.data?.success) {
+      return result?.data?.data;
+    } else {
+      alert(result?.data?.message);
+    }
+
+    return [];
   }
 }
 

@@ -10,6 +10,7 @@ export interface TimesheetsProject {
   description: string,
   code: string,
   deleted: boolean,
+  total_minutes?: number;
 }
 
 
