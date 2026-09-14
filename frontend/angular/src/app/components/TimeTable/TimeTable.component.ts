@@ -45,7 +45,6 @@ export class TimeTable implements OnInit {
   minutesToString = minutesToString;
   
   async ngOnInit() {
-    this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay());
     this.initializeWeekdays(this.currentDate);
     this.refreshRecords();
     const tasks = await this.tasksService.getAll();
@@ -59,9 +58,11 @@ export class TimeTable implements OnInit {
     const weekDays: weekDay[] = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(startDay);
-      const weekDay = date.getDay();// starting from Sunday = 0, Saturday = 6
-      const shiftToMonday = 1 - weekDay;
-      date.setDate(startDay.getDate() + shiftToMonday + i)// remove the shiftToMonday term to start from Sunday
+      console.log('date', date);
+      const dayOfWeek = date.getDay();// starting from Sunday = 0, Saturday = 6
+      const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      date.setDate(startDay.getDate() - daysToSubtract + i)// remove the daysToSubtract term to start from Sunday
+      console.log("date'", date);
       weekDays.push({
         title: date.toLocaleDateString('en-US', { weekday: 'long' }), 
         date: date.getDate(),
