@@ -30,14 +30,6 @@ export class DropdownComponent implements OnChanges {
         this.innerHTML.set('');
       }
     });
-
-    effect(()=> {
-      const text = this.innerHTML();
-      const cleanString = text.replace(/[\r\n]/g, "");
-      if (!cleanString) {
-        this.listVisible = true;
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,16 +43,19 @@ export class DropdownComponent implements OnChanges {
   onInput(event: InputEvent) {
     event.stopPropagation(); 
     const element = event.target as HTMLDivElement;
-    const newValue = String(element.innerText);
+    let newValue = String(element.innerText);
     if (this.value()) {
       this.value.set(null);
       this.innerHTML.set('');
+      newValue = '';
     }
     const cleanString = newValue.replace(/[\r\n]/g, "");
     if (cleanString.length)
       this.visibleOptions = this.options().filter(o => o.title.includes(cleanString));
     else
       this.visibleOptions = this.options();
+
+    this.listVisible = true;
   }
 
   onBlur() {
@@ -68,13 +63,15 @@ export class DropdownComponent implements OnChanges {
   }
 
   onFocus() {
-    this.listVisible = true;
+    if (!this.value())
+      this.listVisible = true;
   }
 
   onSelect(id: string) {
     const selected = this.options().find(o => o.id === id);
     if (selected) {
       this.value.set(selected);
+      // this.visibleOptions = [];
     }
     this.listVisible = false;
   }
