@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class InputComponent {
   type = input<'text' | 'password' | 'email' | 'date' | 'number'>('text');
   label = input<string>('');
+  errorMessage = input<string>('');
   id = uuidv4();
   value = model<string>('');
 

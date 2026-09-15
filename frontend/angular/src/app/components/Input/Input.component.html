@@ -9,4 +9,7 @@
     [value]="value()"
     (input)="onInput($event)"
   >
+  @if(errorMessage()) {
+  <div class="text-red-400 px-2">{{ errorMessage() }}</div>
+  }
 </div>

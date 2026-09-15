@@ -16,6 +16,7 @@ export class RecordForm {
   @Input() task_id: WritableSignal<number> = signal(0);
   @Input() minutes: WritableSignal<number> = signal(0);
   @Input() date: WritableSignal<string> = signal('');
+  dateValidationMessage = input<string>('');
   @Input() comment: WritableSignal<string> = signal('');
   @Input() task: WritableSignal<DropdownItem | null> = signal(null);
   @Input() taskOptions: DropdownItem[] = [];

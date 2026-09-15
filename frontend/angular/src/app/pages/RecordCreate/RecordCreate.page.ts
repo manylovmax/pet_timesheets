@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from "@angular/core";
+import { Component, effect, inject, OnInit, signal, WritableSignal } from "@angular/core";
 import { MainLayout } from "../../layouts/Main/Main.layout";
 import { RecordForm } from "../../components/RecordForm/RecordForm.component";
 import RecordsService from "../../services/records.service";
@@ -18,9 +18,18 @@ export class RecordCreatePage implements OnInit {
 
   minutes: WritableSignal<number> = signal(0);
   date: WritableSignal<string> = signal('');
+  dateValidationMessage: string = '';
   comment: WritableSignal<string> = signal('');
   selectedTask: WritableSignal<DropdownItem | null> = signal(null);
   taskOptions: WritableSignal<DropdownItem[]> = signal([]);
+
+  constructor() {
+    effect(() => {
+      const date = this.date();
+      if (!date)
+        this.dateValidationMessage = 'This field is required';
+    });
+  }
 
 
   async ngOnInit() {
@@ -32,6 +41,9 @@ export class RecordCreatePage implements OnInit {
 
   async onCreate() {
     if (!this.selectedTask())
+      return;
+
+    if (!this.date())
       return;
 
     const result = await this.recordsService.createRecord({
