@@ -28,7 +28,6 @@ export class RecordCreatePage implements OnInit {
     if (tasks.length) {
       this.taskOptions.set(tasks.map(t => ({id: String(t.id), title: t.title})));
     }
-    console.log('tasks', tasks);
   }
 
   async onCreate() {
