@@ -49,8 +49,6 @@ export class ProjectUpdatePage {
     if (this.projectForm().invalid())
       return;
 
-    console.log('id', this.id);
-
     const result = await this.projectsService.update({
       project_id: this.id,
       title: this.projectModel().title, 
