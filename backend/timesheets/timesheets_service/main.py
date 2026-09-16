@@ -405,19 +405,24 @@ async def update_project(body: ProjectUpdate, access_token: Annotated[str | None
         "message": "Wrong project_id or user_id, or project is deleted.",
       }
 
-    project = None
-    stmt = select(Project).where(Project.code == body.code, Project.user_id == user_id, Project.deleted == False)
+    stmt = select(Project).where(
+      Project.code == body.code, 
+      Project.user_id == user_id, 
+      Project.deleted == False,
+      Project.id != body.project_id
+    )
+    project_with_the_same_code = None
     try:
-      project = session.scalars(stmt).one()
+      project_with_the_same_code = session.scalars(stmt).one()
     except NoResultFound:
       pass
 
-    if project:
+    if project_with_the_same_code:
       return {
         "success": False,
         "message": "Project with the same code and project_id and user_id already exists and not deleted. Not deleted projects with the same code are prohibited.",
       }
-    
+
     project.title = body.title
     project.description = body.description
     project.code = body.code
@@ -566,14 +571,19 @@ async def update_task(body: TaskUpdate, access_token: Annotated[str | None, Head
         "message": "Wrong task_id or user_id, or task is deleted.",
       }
 
-    task = None
-    stmt = select(Task).where(Task.code == body.code, Task.user_id == user_id, Task.deleted == False)
+    stmt = select(Task).where(
+      Task.code == body.code, 
+      Task.user_id == user_id, 
+      Task.deleted == False,
+      Task.id != body.task_id
+    )
+    task_with_the_same_code = None
     try:
-      task = session.scalars(stmt).one()
+      task_with_the_same_code = session.scalars(stmt).one()
     except NoResultFound:
       pass
 
-    if task:
+    if task_with_the_same_code:
       return {
         "success": False,
         "message": "Task with the same code and task_id and user_id already exists and not deleted. Not deleted tasks with the same code are prohibited.",
