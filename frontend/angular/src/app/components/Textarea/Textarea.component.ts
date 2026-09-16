@@ -13,8 +13,8 @@ export class TextareaComponent {
 
   onInput(event: InputEvent) {
     event.stopPropagation(); 
-    const element = event.target as HTMLInputElement;
-    const newValue = String(element.value);
+    const element = event.target as HTMLTextAreaElement;
+    const newValue = element.value;
     this.value.set(newValue);
   }
 }

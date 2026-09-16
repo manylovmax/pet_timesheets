@@ -2,24 +2,36 @@ import { Component, inject, signal, WritableSignal } from "@angular/core";
 import { MainLayout } from "../../layouts/Main/Main.layout";
 import { Router, RouterLink } from "@angular/router";
 import ProjectsService from "../../services/projects.service";
-import { InputComponent } from "../../components/Input/Input.component";
-import { TextareaComponent } from "../../components/Textarea/Textarea.component";
+import { form, required, FormField } from "@angular/forms/signals";
+import { StatefulInput } from "../../components/StatefulInput/StatefulInput.component";
+import { StatefulTextarea } from "../../components/StatefulTextarea/StatefulTextarea.component";
+
+interface ProjectFormModel {
+  title: string;
+  code: string;
+  description: string;
+}
 
 @Component({
   selector: 'ProjectCreatePage',
   templateUrl: './ProjectCreate.page.html',
-  imports: [MainLayout, InputComponent, TextareaComponent, RouterLink],
+  imports: [MainLayout, StatefulInput, StatefulTextarea, RouterLink, FormField],
 })
 export class ProjectCreatePage {
   private readonly projectsService = inject(ProjectsService);
   private readonly router = inject(Router);
 
-  title: WritableSignal<string> = signal('');
-  code: WritableSignal<string> = signal('');
-  description: WritableSignal<string> = signal('');
+  projectModel = signal<ProjectFormModel>({title: '', code: '', description: ''});
+  projectForm = form(this.projectModel, (schemaPath) => {
+    required(schemaPath.title, {message: 'Title is required'});
+    required(schemaPath.code, {message: 'Code is required'});
+  });
 
   async onCreate() {
-    const result = await this.projectsService.create({title: this.title(), description: this.description(), code: this.code()});
+    if (this.projectForm().invalid())
+      return;
+    
+    const result = await this.projectsService.create(this.projectModel());
     if (result)
       this.router.navigate(['/projects']);
     else

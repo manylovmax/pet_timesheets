@@ -1,0 +1,33 @@
+@if (!hidden()) {
+  <div class="flex flex-col">
+    <label
+      class="pl-2" 
+      [for]="id">{{ label() || '' }}</label>
+    <textarea
+      class="bg-white rounded-2xl px-2"
+      [value]="value()"
+      (input)="onTextareaInput($event)"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [class.invalid]="invalid()"
+      [attr.aria-invalid]="invalid()"
+      (blur)="touch.emit()"
+    ></textarea>
+  </div>
+  <div class="flex flex-col gap-4 pl-2">
+    @if (invalid()) {
+      <div class="flex flex-col gap-2" role="alert">
+        @for (error of errors(); track error) {
+          <span class="text-red-400">{{ error.message }}</span>
+        }
+      </div>
+    }
+    @if (disabled() && disabledReasons().length > 0) {
+      <div class="flex flex-col gap-2">
+        @for (reason of disabledReasons(); track reason) {
+          <span>{{ reason.message }}</span>
+        }
+      </div>
+    }
+  </div>
+}
