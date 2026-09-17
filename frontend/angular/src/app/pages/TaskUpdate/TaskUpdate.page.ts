@@ -1,14 +1,23 @@
 import { Component, inject, signal, WritableSignal } from "@angular/core";
 import { MainLayout } from "../../layouts/Main/Main.layout";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { InputComponent } from "../../components/Input/Input.component";
-import { TextareaComponent } from "../../components/Textarea/Textarea.component";
 import TasksService, { TimesheetsTask } from "../../services/tasks.service";
+import { StatefulInput } from "../../components/StatefulInput/StatefulInput.component";
+import { StatefulTextarea } from "../../components/StatefulTextarea/StatefulTextarea.component";
+import { form, FormField, required } from "@angular/forms/signals";
+
+
+interface TaskFormModel {
+  title: string;
+  code: string;
+  description: string;
+}
+
 
 @Component({
   selector: 'TaskUpdatePage',
   templateUrl: './TaskUpdate.page.html',
-  imports: [MainLayout, InputComponent, TextareaComponent, RouterLink],
+  imports: [MainLayout, StatefulInput, StatefulTextarea, RouterLink, FormField],
 })
 export class TaskUpdatePage {
   private readonly tasksService = inject(TasksService);
@@ -18,9 +27,13 @@ export class TaskUpdatePage {
 
   id: number = 0;
   project_id: WritableSignal<number> = signal(0);
-  title: WritableSignal<string> = signal('');
-  code: WritableSignal<string> = signal('');
-  description: WritableSignal<string> = signal('');
+
+  taskModel = signal<TaskFormModel>({title: '', code: '', description: ''});
+  taskForm = form(this.taskModel, (schemaPath) => {
+    required(schemaPath.title, {message: 'Title is required'});
+    required(schemaPath.code, {message: 'Code is required'});
+  });
+
 
   constructor() {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -30,18 +43,21 @@ export class TaskUpdatePage {
     this.task = await this.tasksService.get(this.id);
     if (this.task) {
       this.project_id.set(this.task?.project_id);
-      this.title.set(String(this.task?.title));
-      this.code.set(String(this.task?.code));
-      this.description.set(String(this.task?.description));
+      this.taskModel.set({
+        title: this.task?.title,
+        code: this.task?.code,
+        description: this.task?.description,
+      })
     }
   }
 
   async onUpdate() {
+    if (this.taskForm().invalid())
+      return;
+
     const result = await this.tasksService.update({
       task_id: this.id,
-      title: this.title(), 
-      description: this.description(), 
-      code: this.code()
+      ...this.taskModel(),
     });
     if (result)
       this.router.navigate(['/project/' + this.project_id()]);
