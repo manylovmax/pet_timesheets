@@ -62,11 +62,11 @@ export class RecordsService {
   }
 
 
-  async deleteRecord(recordId: number): Promise<boolean> {
+  async deleteRecord(record_id: number): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
     const result = await apiClient.delete(config.api.record, {
       params: {
-        record_id: recordId,
+        record_id,
       },
       headers: {
         'access-token': accessToken,
