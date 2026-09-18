@@ -149,16 +149,16 @@ export class TimeTable implements OnInit {
     this.router.navigate(['/record-create']);
   }
 
-  goToPreviousWeek() {
+  async goToPreviousWeek() {
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.initializeWeekdays(this.currentDate);
-    this.refreshRecords();
+    await this.refreshRecords();
   }
 
-  goToNextWeek() {
+  async goToNextWeek() {
     this.currentDate.setDate(this.currentDate.getDate() + 7);
     this.initializeWeekdays(this.currentDate);
-    this.refreshRecords();
+    await this.refreshRecords();
   }
 
   goToOldLayout() {
