@@ -22,17 +22,16 @@ const emit = defineEmits(['submit']);
     <input-component 
       type="date"
       label="Date"
-      v-model:value="dateModel"
+      v-model="dateModel"
     />
     <input-component 
       type="number"
       label="Minutes"
-      v-model:value="minutesModel"
+      v-model="minutesModel"
     />
     <textarea-component 
-      type="text"
       label="Comment"
-      v-model:value="commentModel"
+      v-model="commentModel"
     />
     <button 
       class="bg-green-300 rounded-2xl px-2 uppercase cursor-pointer"

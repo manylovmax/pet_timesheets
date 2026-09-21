@@ -27,12 +27,12 @@ async function login() {
     <input-component 
       type="email"
       label="Email"
-      v-model:value="email"
+      v-model="email"
     />
     <input-component 
       label="Password"
       type="password" 
-      v-model:value="password"
+      v-model="password"
     />
     <button 
       class="bg-green-300 rounded-2xl px-2 uppercase"

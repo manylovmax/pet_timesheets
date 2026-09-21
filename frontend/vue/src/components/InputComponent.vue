@@ -7,7 +7,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 const id = uuidv4();
-const value = defineModel('value');
+const value = defineModel();
 </script>
 <template>
   <div class="flex flex-col">

@@ -33,22 +33,22 @@ async function signup() {
     <input-component
       label="Email"
       type="email"
-      v-model:value="email"
+      v-model="email"
     />
     <input-component 
       label="Fullname"
       type="text"
-      v-model:value="fullname"
+      v-model="fullname"
     />
     <input-component 
       label="Password"
       type="password" 
-      v-model:value="password"
+      v-model="password"
     />
     <input-component 
       label="Password repeat"
       type="password" 
-      v-model:value="passwordRepeat"
+      v-model="passwordRepeat"
     />
     <button 
       class="bg-green-300 rounded-2xl px-2 uppercase"

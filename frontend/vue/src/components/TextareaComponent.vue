@@ -6,8 +6,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 const id = uuidv4();
-const value = defineModel('value', { 
-  type: String, 
+const value = defineModel({ 
   required: false, 
   default: '' 
 });
