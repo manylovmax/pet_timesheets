@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type AuthService from '@/services/auth.service';
-import { LogOut } from '@lucide/vue';
 import { inject } from 'vue';
 import router from '@/router/index.ts';
 
@@ -17,14 +16,59 @@ async function signout() {
 }
 </script>
 <template>
-  <div class="flex justify-center">
-    <div class="flex justify-between py-2 sm:px-16 max-w-[1920px] w-full">
-      <div class="text-2xl">Timesheets</div>
+<div class="flex justify-center">
+  <div class="sm:px-16 max-w-[1920px] w-full">
+    <div class="hidden sm:flex justify-between py-2 w-full place-items-end gap-4">
+      <div class="flex gap-4 place-items-end">
+        <RouterLink 
+          class="text-2xl"
+          to="/timetable">
+          Timesheets
+        </RouterLink>
+        <RouterLink 
+          class="underline"
+          to="/timetable">
+          Timetable
+        </RouterLink>
+        <RouterLink 
+          class="underline"
+          to="/projects">
+          Projects
+        </RouterLink>
+      </div>
       <div
-        class="cursor-pointer"
+        class="cursor-pointer underline select-none"
         @click="signout()">
-        <LogOut :size="32" :stroke-width="1" />
+        Sign out
+      </div>
+    </div>
+    
+    <div class="flex sm:hidden flex-col gap-4">
+      <div class="flex gap-4 w-full place-items-end justify-between">
+        <RouterLink 
+          class="text-2xl"
+          to="/timetable">
+          Timesheets
+        </RouterLink>
+        <div
+          class="cursor-pointer underline select-none"
+          @click="signout()">
+          Sign out
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <RouterLink 
+          class="underline"
+          to="/timetable">
+          Timetable
+        </RouterLink>
+        <RouterLink 
+          class="underline"
+          to="/projects">
+          Projects
+        </RouterLink>
       </div>
     </div>
   </div>
+</div>
 </template>
