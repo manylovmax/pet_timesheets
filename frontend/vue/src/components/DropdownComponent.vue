@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownItem } from '@/interfaces';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 
 interface Props {
@@ -14,6 +14,18 @@ const model = defineModel<DropdownItem | null>({ default: null });
 const visibleOptions = ref<DropdownItem[]>([]);
 const listVisible = ref<boolean>(false);
 const innerHTML = ref<string>('');
+
+// watch();
+
+watchEffect(() => {
+  const selected = options.find(o => o.id === model.value?.id);
+  if (selected) {
+    innerHTML.value = '<div class="rounded bg-gray-200 px-1 w-fit">' + selected.title + '</div>';
+    listVisible.value = false;
+  } else {
+    innerHTML.value = '';
+  }
+});
 
 
 function onInput(event: InputEvent) {
