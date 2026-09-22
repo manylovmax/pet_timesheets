@@ -5,6 +5,7 @@ import SignupPage from '@/pages/SignupPage.vue';
 import RecordsPage from '@/pages/RecordsPage.vue';
 import RecordUpdate from '@/pages/RecordUpdate.vue';
 import RecordCreate from '@/pages/RecordCreate.vue';
+import TimetablePage from '@/pages/TimetablePage.vue';
 
 const authService = new AuthService();
 
@@ -20,7 +21,7 @@ async function authGuard() {
 const routes = [
   {
     path: '/',
-    redirect: '/records',
+    redirect: '/timetable',
   },
   {
     path: '/records',
@@ -47,7 +48,12 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)',
-    redirect: '/records',
+    redirect: '/timetable',
+  },
+  {
+    path: '/timetable',
+    component: TimetablePage,
+    beforeEnter: [authGuard]
   },
 ]
 

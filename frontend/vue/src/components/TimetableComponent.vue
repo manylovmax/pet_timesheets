@@ -6,6 +6,8 @@ import { minutesToString } from '@/utils/time';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { LucideX } from '@lucide/vue';
+import { cloneDeep } from 'lodash';
+
 import DropdownComponent from './DropdownComponent.vue';
 import TimeInput from './TimeInput.vue';
 import TextareaComponent from './TextareaComponent.vue';
@@ -76,7 +78,7 @@ function initializeWeekdays(startDay: Date) {
 }
 
 async function  refreshRecords(): Promise<void> {
-  const weekDays = structuredClone(globalWeekDays.value);
+  const weekDays = cloneDeep(globalWeekDays.value);
   for (let i = 0; i < weekDays.length; i++) {
     const weekDay = weekDays[i];
     if (weekDay) {
