@@ -47,13 +47,13 @@ const routes = [
     component: SignupPage,
   },
   {
-    path: '/:pathMatch(.*)',
-    redirect: '/timetable',
-  },
-  {
     path: '/timetable',
     component: TimetablePage,
     beforeEnter: [authGuard]
+  },
+  {
+    path: '/:pathMatch(.*)',
+    redirect: '/timetable',
   },
 ]
 
