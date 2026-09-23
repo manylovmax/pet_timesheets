@@ -9,16 +9,18 @@ interface Props {
   required?: boolean,
 }
 
-const { label = '', required = true, options } = defineProps<Props>();
+const props = defineProps<Props>();
 const model = defineModel<DropdownItem | null>({ default: null });
-const visibleOptions = ref<DropdownItem[]>([]);
+const visibleOptions = ref<DropdownItem[]>(props.options);
 const listVisible = ref<boolean>(false);
 const innerHTML = ref<string>('');
+
+console.log('dropdown-component taskOptions', props.options);
 
 // watch();
 
 watchEffect(() => {
-  const selected = options.find(o => o.id === model.value?.id);
+  const selected = props.options.find(o => o.id === model.value?.id);
   if (selected) {
     innerHTML.value = '<div class="rounded bg-gray-200 px-1 w-fit">' + selected.title + '</div>';
     listVisible.value = false;
@@ -39,9 +41,9 @@ function onInput(event: InputEvent) {
   }
   const cleanString = newValue.replace(/[\r\n]/g, "");
   if (cleanString.length)
-    visibleOptions.value = options.filter(o => o.title.includes(cleanString));
+    visibleOptions.value = props.options.filter(o => o.title.includes(cleanString));
   else
-    visibleOptions.value = options;
+    visibleOptions.value = props.options;
 
   listVisible.value = true;
 }
@@ -55,8 +57,8 @@ function onFocus() {
     listVisible.value = true;
 }
 
-function onSelect(id: string) {
-  const selected = options.find(o => o.id === id);
+function onSelect(id: number) {
+  const selected = props.options.find(o => o.id === id);
   if (selected) {
     model.value = selected;
   }
@@ -69,7 +71,7 @@ function onSelect(id: string) {
   <label
     v-if="label"
     class="pl-2" 
-  >{{ label }}</label>
+  >{{ props.label }}</label>
   <div class="relative w-full">
     <div 
       contenteditable="true" 
@@ -81,7 +83,7 @@ function onSelect(id: string) {
       @keydown.enter="$event.preventDefault()"
     ></div>
     <div 
-      v-if="required && !model"
+      v-if="props.required && !model"
       class="text-red-400 px-2">This field is required</div>
 
     <div class="absolute z-10 flex-col bg-white rounded top-6 left-0 w-full"
