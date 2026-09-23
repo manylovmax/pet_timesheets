@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { Pencil, Trash } from '@lucide/vue';
 import { computed } from 'vue';
 
 export interface TableColumn {
   label: string, 
   attribute: string,
 };
+
 interface Props {
   columns: Array<TableColumn>,
+  openObjectPageColumnAttribute?: string,
   rows: Array<Record<string, string>>,
   deleteButton: boolean,
   updateButton: boolean,
 };
 const props = defineProps<Props>();
-const emit = defineEmits(['delete', 'update']);
+const emit = defineEmits(['delete', 'update', 'open']);
 const colspan = computed(() => {
   const rowsCount = props.rows.length;
   const actionButtonPresent = props.deleteButton || props.updateButton;
@@ -22,7 +23,7 @@ const colspan = computed(() => {
 });
 </script>
 <template>
-<div class="w-full overflow-x-scroll">
+<div class="w-full overflow-auto">
   <table class="w-full min-w-[600px] py-2"
     v-if="props.columns.length">
     <thead>
@@ -34,21 +35,23 @@ const colspan = computed(() => {
     <tbody v-if="props.rows.length" >
       <tr v-for="(row, index) in props.rows" :key="index">
         <td v-for="col in props.columns" :key="col.attribute">
-           {{ row[col.attribute] || '' }}
+          <div v-if="col.attribute === props.openObjectPageColumnAttribute"
+            class="select-none cursor-pointer underline"
+            @click="emit('open', index)"
+          >{{ row[col.attribute] || '' }}</div>
+          <div v-else >{{ row[col.attribute] || '' }}</div>
         </td>
         <td v-if="props.updateButton || props.deleteButton">
           <div
-            class="flex gap-2 w-full justify-center">
-            <Pencil 
-              class="cursor-pointer"
+            class="flex gap-4 w-full justify-center">
+            <div 
               v-if="props.updateButton"
               @click="emit('update', index)"  
-            />            
-            <Trash 
-              class="cursor-pointer"
+              class="select-none cursor-pointer underline">Update</div>
+            <div 
               v-if="props.deleteButton"
-              @click="emit('delete', index)"
-              />
+              @click="emit('delete', index)"  
+              class="select-none cursor-pointer underline">Delete</div>
           </div>
         </td>
       </tr>
