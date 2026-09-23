@@ -6,6 +6,7 @@ import RecordsPage from '@/pages/RecordsPage.vue';
 import RecordUpdate from '@/pages/RecordUpdate.vue';
 import RecordCreate from '@/pages/RecordCreate.vue';
 import TimetablePage from '@/pages/TimetablePage.vue';
+import ProjectsPage from '@/pages/ProjectsPage.vue';
 
 const authService = new AuthService();
 
@@ -49,6 +50,11 @@ const routes = [
   {
     path: '/timetable',
     component: TimetablePage,
+    beforeEnter: [authGuard]
+  },
+  {
+    path: '/projects',
+    component: ProjectsPage,
     beforeEnter: [authGuard]
   },
   {
