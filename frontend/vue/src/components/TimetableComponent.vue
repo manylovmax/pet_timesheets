@@ -47,7 +47,7 @@ initializeWeekdays(currentDate);
 refreshRecords();
 const tasks = await tasksService.getAll();
 if (tasks.length) {
-  taskOptions.value = tasks.map(t => ({id: String(t.id), title: t.title}));
+  taskOptions.value = tasks.map(t => ({id: t.id, title: t.title}));
 }
 
 function initializeWeekdays(startDay: Date) {
@@ -108,7 +108,7 @@ function onEdit(recordId: number) {
     minutes.value = editingRecord.value?.minutes;
     date.value = String(editingRecord.value?.date);
     comment.value = editingRecord.value?.comment;
-    selectedTask.value = taskOptions.value.find(to => to.id === String(editingRecord.value?.task_id));
+    selectedTask.value = taskOptions.value.find(to => to.id === editingRecord.value?.task_id);
     modalOpen.value = true;
   }
 }
