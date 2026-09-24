@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import InputComponent from './InputComponent.vue';
 import type AuthService from '@/services/auth.service.ts';
 import { useRouter } from 'vue-router';
@@ -9,10 +9,36 @@ const authService: AuthService | undefined = inject('AuthService');
 
 const email = ref('');
 const password = ref('');
+const emailErrors = ref<string[]>([]);
+const passwordErrors = ref<string[]>([]);
+const isValid = ref<boolean>(false);
+
+watch(email, () => {
+  const errors = [];
+  if (!email.value)
+    errors.push('This field is required');
+
+  emailErrors.value = errors;
+}, { immediate: true });
+
+watch(password, () => {
+  const errors = [];
+  if (!password.value)
+    errors.push('This field is required');
+
+  passwordErrors.value = errors;
+}, { immediate: true });
+
+watch([emailErrors, passwordErrors], () => {
+  isValid.value = !Boolean(emailErrors.value.length || passwordErrors.value.length);
+}, { immediate: true });
 
 async function login() {
   if (authService !== undefined) {
-    const result = await authService.signin(password.value, email.value);
+    if (!isValid.value)
+      return;
+    
+      const result = await authService.signin(password.value, email.value);
     if (result) {
       router.push('/');
     }
@@ -28,20 +54,29 @@ async function login() {
       type="email"
       label="Email"
       v-model="email"
+      :errors="emailErrors"
     />
     <input-component 
       label="Password"
       type="password" 
       v-model="password"
+      :errors="passwordErrors"
     />
-    <button 
-      class="bg-green-300 rounded-2xl px-2 uppercase"
-      @click="login()"
-    >submit</button>
-    <RouterLink 
-      class="underline"
-      to="/signup">
-      Sign up
-    </RouterLink>
+
+    <div class="flex gap-4 justify-between w-full">
+      <RouterLink 
+        class="underline select-none cursor-pointer"
+        to="/signup">
+        Sign up
+      </RouterLink>
+      <div 
+        class="select-none"
+        :class="{
+          'underline': isValid,
+          'cursor-pointer': isValid,
+        }"
+        @click="login()"
+      >Submit</div>
+    </div>
   </div>
 </template>
