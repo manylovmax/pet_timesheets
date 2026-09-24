@@ -63,10 +63,10 @@ services:
     ports: 
       - 8081:80
   
-  # frontend_vue:
-  #   build: frontend/vue/
-  #   ports: 
-  #     - 8082:80
+  frontend_vue:
+    build: frontend/vue/
+    ports: 
+      - 8082:80
   
   # frontend_react:
   #   build: frontend/react/
