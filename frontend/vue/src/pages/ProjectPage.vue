@@ -68,7 +68,7 @@ async function deleteTask(index: number) {
 
 function goToUpdatePage(index: number) {
   const id = tasks.value[index]?.id;
-  router.push('/task/' + id + '/update');
+  router.push("/project/" + projectId + "/update-task/" + id);
 }
 
 </script>

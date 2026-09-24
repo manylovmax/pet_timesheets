@@ -11,6 +11,7 @@ import ProjectCreate from '@/pages/ProjectCreate.vue';
 import ProjectUpdate from '@/pages/ProjectUpdate.vue';
 import ProjectPage from '@/pages/ProjectPage.vue';
 import TaskCreate from '@/pages/TaskCreate.vue';
+import TaskUpdate from '@/pages/TaskUpdate.vue';
 
 const authService = new AuthService();
 
@@ -79,6 +80,11 @@ const routes = [
   {
     path: '/project/:id/create-task',
     component: TaskCreate,
+    beforeEnter: [authGuard]
+  },
+  {
+    path: '/project/:id/update-task/:taskId',
+    component: TaskUpdate,
     beforeEnter: [authGuard]
   },
   {
