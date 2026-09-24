@@ -30,6 +30,8 @@ async function onSave() {
       <div 
         class="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center z-10 relative w-[360px] sm:w-[400px]">
 
+        <div>Create project</div>
+        
         <InputComponent 
           type="text"
           label="Title"
