@@ -8,6 +8,7 @@ import RecordCreate from '@/pages/RecordCreate.vue';
 import TimetablePage from '@/pages/TimetablePage.vue';
 import ProjectsPage from '@/pages/ProjectsPage.vue';
 import ProjectCreate from '@/pages/ProjectCreate.vue';
+import ProjectUpdate from '@/pages/ProjectUpdate.vue';
 
 const authService = new AuthService();
 
@@ -61,6 +62,11 @@ const routes = [
   {
     path: '/project/create',
     component: ProjectCreate,
+    beforeEnter: [authGuard]
+  },
+  {
+    path: '/project/:id/update',
+    component: ProjectUpdate,
     beforeEnter: [authGuard]
   },
   {
