@@ -10,6 +10,7 @@ import ProjectsPage from '@/pages/ProjectsPage.vue';
 import ProjectCreate from '@/pages/ProjectCreate.vue';
 import ProjectUpdate from '@/pages/ProjectUpdate.vue';
 import ProjectPage from '@/pages/ProjectPage.vue';
+import TaskCreate from '@/pages/TaskCreate.vue';
 
 const authService = new AuthService();
 
@@ -75,11 +76,11 @@ const routes = [
     component: ProjectPage,
     beforeEnter: [authGuard]
   },
-  // {
-  //   path: '/project/:id/create-task',
-  //   component: ProjectUpdate,
-  //   beforeEnter: [authGuard]
-  // },
+  {
+    path: '/project/:id/create-task',
+    component: TaskCreate,
+    beforeEnter: [authGuard]
+  },
   {
     path: '/:pathMatch(.*)',
     redirect: '/timetable',
