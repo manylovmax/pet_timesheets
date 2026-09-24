@@ -2,15 +2,15 @@
 import type { DropdownItem } from '@/interfaces';
 import { RecordsService, type TimesheetsRecord } from '@/services/records.service';
 import TasksService from '@/services/tasks.service';
-import { minutesToString } from '@/utils/time';
-import { ref } from 'vue';
+import { minutesToString, parseTime, validateTimeString } from '@/utils/time';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { LucideX } from '@lucide/vue';
 import { cloneDeep } from 'lodash';
 
 import DropdownComponent from './DropdownComponent.vue';
-import TimeInput from './TimeInput.vue';
 import TextareaComponent from './TextareaComponent.vue';
+import InputComponent from './InputComponent.vue';
 
 
 const router = useRouter();
@@ -36,11 +36,46 @@ const editingRecord = ref<TimesheetsRecord | undefined>(undefined);
 const currentDate = new Date();
 const taskOptions = ref<DropdownItem[]>([]);
 
-const minutes = ref<number>(0);
+const time = ref<string>('');
 const date = ref<string>('');
 const comment = ref<string>('');
 const selectedTask = ref<DropdownItem | undefined>();
 const modalOpen = ref<boolean>(false);
+
+const dateErrors = ref<string[]>([]);
+const timeErrors = ref<string[]>([]);
+const taskErrors = ref<string[]>([]);
+const isValid = ref<boolean>(false);
+
+watch(date, () => {
+  if (!date.value)
+    dateErrors.value = ['This field is required'];
+  else
+    dateErrors.value = [];
+}, { immediate: true });
+
+watch(time, () => {
+  const errors = [];
+
+  if (!time.value)
+    errors.push('This field is required');
+  
+  if (!validateTimeString(time.value))
+    errors.push('Input time in format "Xh Ym", where X and Y are integers, and first or second group is optional.');
+
+  timeErrors.value = errors;
+}, { immediate: true });
+
+watch(selectedTask, () => {
+  if (!selectedTask.value)
+    taskErrors.value = ['This field is required'];
+  else
+    taskErrors.value = [];
+}, { immediate: true });
+
+watch([dateErrors, timeErrors, taskErrors], () => {
+  isValid.value = !Boolean(dateErrors.value.length || timeErrors.value.length || taskErrors.value.length);
+}, { immediate: true });
 
 
 initializeWeekdays(currentDate);
@@ -105,7 +140,7 @@ async function  refreshRecords(): Promise<void> {
 function onEdit(recordId: number) {
   editingRecord.value = records.value.find(r => r.id === recordId);
   if (editingRecord.value) {
-    minutes.value = editingRecord.value?.minutes;
+    time.value = minutesToString(editingRecord.value?.minutes);
     date.value = String(editingRecord.value?.date);
     comment.value = editingRecord.value?.comment;
     selectedTask.value = taskOptions.value.find(to => to.id === editingRecord.value?.task_id);
@@ -121,18 +156,20 @@ async function onSave() {
   if (!editingRecord.value)
     return;
 
+  if (!isValid.value)
+    return;
+
   const result = await recordsService.updateRecord({
     task_id: editingRecord.value.task_id,
     record_id: editingRecord.value.id,
-    minutes: minutes.value, 
+    minutes: parseTime(time.value), 
     date: date.value,
     comment: comment.value,
   });
   if (result) {
     await refreshRecords();
     modalOpen.value = false;
-  } else
-    alert('Record update failure.');
+  }
 }
 
 async function onDelete() {
@@ -253,13 +290,22 @@ async function goToNextWeek() {
     <div>Update record</div>
     <DropdownComponent
       label="Task"
-      :required="true"
       :options="taskOptions"
       v-model="selectedTask"
+      :errors="taskErrors"
     />
-    <TimeInput
+    <InputComponent
+      type="date"
+      label="Date"
+      v-model="date"
+      :errors="dateErrors"
+    />
+    <InputComponent
+      type="text"
       label="Spent time"
-      v-model="minutes"
+      v-model="time"
+      :errors="timeErrors"
+      :spellcheck="false"
     />
     <TextareaComponent 
       label="Comment"
@@ -271,7 +317,11 @@ async function goToNextWeek() {
         @click="onDelete()"
       >Delete</div>
       <div 
-        class="underline cursor-pointer select-none"
+        class="select-none"
+        :class="{
+          'underline': isValid,
+          'cursor-pointer': isValid,
+        }"
         @click="onSave()"
       >Update</div>
     </div>

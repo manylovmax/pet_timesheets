@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import ProjectsService from '@/services/projects.service';
 import InputComponent from '@/components/InputComponent.vue';
@@ -16,7 +16,32 @@ const title = ref(project?.title || '');
 const code = ref(project?.code || '');
 const description = ref(project?.description || '');
 
+const titleErrors = ref<string[]>([]);
+const codeErrors = ref<string[]>([]);
+const isValid = ref<boolean>(false);
+
+watch(title, () => {
+  if (!title.value)
+    titleErrors.value = ['This field is required'];
+  else
+    titleErrors.value = [];
+}, { immediate: true });
+
+watch(code, () => {
+  if (!code.value)
+    codeErrors.value = ['This field is required'];
+  else
+    codeErrors.value = [];
+}, { immediate: true });
+
+watch([titleErrors, codeErrors], () => {
+  isValid.value = !Boolean(titleErrors.value.length || codeErrors.value.length);
+}, { immediate: true });
+
 async function onSave() {
+  if (!isValid.value)
+    return;
+
   const result = await projectsService.update({
     project_id: projectId,
     title: title.value,
@@ -39,12 +64,14 @@ async function onSave() {
           type="text"
           label="Title"
           v-model="title"
+          :errors="titleErrors"
         />
 
         <InputComponent 
           type="text"
           label="Code"
           v-model="code"
+          :errors="codeErrors"
         />
 
         <textarea-component 
@@ -59,7 +86,11 @@ async function onSave() {
             Go to projects
           </RouterLink>
           <div 
-            class="underline cursor-pointer select-none"
+            class="select-none"
+            :class="{
+              'underline': isValid,
+              'cursor-pointer': isValid,
+            }"
             @click="onSave()"
           >
             Update

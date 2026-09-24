@@ -6,7 +6,7 @@ import { ref, watchEffect } from 'vue';
 interface Props {
   label?: string,
   options: DropdownItem[],
-  required?: boolean,
+  errors?: string[],
 }
 
 const props = defineProps<Props>();
@@ -15,9 +15,6 @@ const visibleOptions = ref<DropdownItem[]>(props.options);
 const listVisible = ref<boolean>(false);
 const innerHTML = ref<string>('');
 
-console.log('dropdown-component taskOptions', props.options);
-
-// watch();
 
 watchEffect(() => {
   const selected = props.options.find(o => o.id === model.value?.id);
@@ -82,9 +79,6 @@ function onSelect(id: number) {
       :innerHTML="innerHTML"
       @keydown.enter="$event.preventDefault()"
     ></div>
-    <div 
-      v-if="props.required && !model"
-      class="text-red-400 px-2">This field is required</div>
 
     <div class="absolute z-10 flex-col bg-white rounded top-6 left-0 w-full"
       :class="{
@@ -97,6 +91,15 @@ function onSelect(id: number) {
         class="hover:bg-gray-100 px-2 cursor-pointer"
         @mousedown="onSelect(option.id)">{{ option.title }}</div>
     </div>
+
+    <div v-if="errors && errors.length"
+      class="flex flex-col gap-4" >
+      <div 
+        v-for="(error, i) in errors"
+        :key="i"
+        class="text-red-400 px-2">{{ error }}</div>
+    </div>
+
   </div>
 </div>
 </template>
