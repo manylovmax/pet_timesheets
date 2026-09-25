@@ -10,11 +10,11 @@ const authService: AuthService | undefined = inject('AuthService');
 const email = ref('');
 const fullname = ref('');
 const password = ref('');
-const passwordRepeat = ref('');
+const passwordConfirm = ref('');
 const emailErrors = ref<string[]>([]);
 const fullnameErrors = ref<string[]>([]);
 const passwordErrors = ref<string[]>([]);
-const passwordRepeatErrors = ref<string[]>([]);
+const passwordConfirmErrors = ref<string[]>([]);
 const isValid = ref<boolean>(false);
 
 watch(email, () => {
@@ -41,22 +41,22 @@ watch(password, () => {
   passwordErrors.value = errors;
 }, { immediate: true });
 
-watch(passwordRepeat, () => {
+watch([passwordConfirm, password], () => {
   const errors = [];
-  if (!passwordRepeat.value)
+  if (!passwordConfirm.value)
     errors.push('This field is required');
 
-  if (passwordRepeat.value !== password.value)
+  if (passwordConfirm.value !== password.value)
     errors.push('Passwords don\'t match')
 
-  passwordRepeatErrors.value = errors;
+  passwordConfirmErrors.value = errors;
 }, { immediate: true });
 
 watch([emailErrors, passwordErrors], () => {
   isValid.value = !Boolean(
     emailErrors.value.length || 
     passwordErrors.value.length || 
-    passwordRepeatErrors.value.length || 
+    passwordConfirmErrors.value.length || 
     fullnameErrors.value.length
   );
 }, { immediate: true });
@@ -101,10 +101,10 @@ async function signup() {
       :errors="passwordErrors"
     />
     <input-component 
-      label="Password repeat"
+      label="Confirm password"
       type="password" 
-      v-model="passwordRepeat"
-      :errors="passwordRepeatErrors"
+      v-model="passwordConfirm"
+      :errors="passwordConfirmErrors"
     />
 
     <div class="flex gap-4 justify-between w-full">

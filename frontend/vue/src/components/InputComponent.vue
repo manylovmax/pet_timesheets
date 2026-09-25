@@ -24,7 +24,7 @@ const value = defineModel();
       :spellcheck="spellcheck"
     >
     <div v-if="errors && errors.length"
-      class="flex flex-col gap-4" >
+      class="flex flex-col" >
       <div 
         v-for="(error, i) in errors"
         :key="i"
