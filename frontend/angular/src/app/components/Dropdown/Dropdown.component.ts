@@ -1,5 +1,4 @@
 import { Component, effect, Input, input, OnChanges, OnInit, signal, SimpleChanges, WritableSignal } from "@angular/core";
-import { v4 as uuidv4 } from 'uuid';
 
 export interface DropdownItem {
     id: number;
@@ -15,7 +14,6 @@ export class DropdownComponent implements OnChanges {
   options = input<DropdownItem[]> ([]);
   label = input<string>('');
   required = input<boolean>(true);
-  id = uuidv4();
   innerHTML = signal('');
   visibleOptions: DropdownItem[] = this.options();
   listVisible: boolean = false;

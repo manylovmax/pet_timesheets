@@ -4,6 +4,7 @@
       class="pl-2" 
       [for]="id">{{ label() || '' }}</label>
     <textarea
+      [id]="id"
       class="bg-white rounded-2xl px-2"
       [value]="value()"
       (input)="onTextareaInput($event)"
