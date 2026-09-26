@@ -2,7 +2,7 @@ import { Component, effect, Input, input, OnChanges, OnInit, signal, SimpleChang
 import { v4 as uuidv4 } from 'uuid';
 
 export interface DropdownItem {
-    id: string;
+    id: number;
     title: string;
 }
 
@@ -67,7 +67,7 @@ export class DropdownComponent implements OnChanges {
       this.listVisible = true;
   }
 
-  onSelect(id: string) {
+  onSelect(id: number) {
     const selected = this.options().find(o => o.id === id);
     if (selected) {
       this.value.set(selected);

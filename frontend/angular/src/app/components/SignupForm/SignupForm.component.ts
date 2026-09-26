@@ -30,12 +30,12 @@ export class SignupForm {
     required(schemaPath.fullname, {message: 'Fullname is required'});
     required(schemaPath.password, {message: 'Password is required'});
     required(schemaPath.confirmPassword, {message: 'Please confirm your password'});
-     validate(schemaPath.confirmPassword, ({value, valueOf}) => {
+    validate(schemaPath.confirmPassword, ({value, valueOf}) => {
       const confirmPassword = value();
       const password = valueOf(schemaPath.password);
       if (confirmPassword !== password) {
         return {
-          kind: 'passwordMismatch',
+          kind: 'passwordsMismatch',
           message: 'Passwords do not match',
         };
       }

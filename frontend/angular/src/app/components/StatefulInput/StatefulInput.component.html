@@ -6,6 +6,7 @@
     <input
       class="bg-white rounded-2xl px-2"
       [type]="type()"
+      [spellcheck]="spellcheck()"
       [value]="value()"
       (input)="value.set($event.target.value)"
       [disabled]="disabled()"
@@ -15,16 +16,16 @@
       (blur)="touch.emit()"
     />
   </div>
-  <div class="flex flex-col gap-4 pl-2">
+  <div class="flex flex-col pl-2">
     @if (invalid()) {
-      <div class="flex flex-col gap-2" role="alert">
+      <div class="flex flex-col" role="alert">
         @for (error of errors(); track error) {
           <span class="text-red-400">{{ error.message }}</span>
         }
       </div>
     }
     @if (disabled() && disabledReasons().length > 0) {
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
         @for (reason of disabledReasons(); track reason) {
           <span>{{ reason.message }}</span>
         }

@@ -1,41 +1,47 @@
 import { Component, effect, inject, OnInit, signal, WritableSignal } from "@angular/core";
 import { MainLayout } from "../../layouts/Main/Main.layout";
-import { RecordForm } from "../../components/RecordForm/RecordForm.component";
 import RecordsService from "../../services/records.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import TasksService from "../../services/tasks.service";
-import { DropdownItem } from "../../components/Dropdown/Dropdown.component";
+import { DropdownComponent, DropdownItem } from "../../components/Dropdown/Dropdown.component";
+import { form, FormField, required } from "@angular/forms/signals";
+import { parseTimeToMinutes, time } from "../../utils/time";
+import { StatefulInput } from "../../components/StatefulInput/StatefulInput.component";
+import { StatefulTextarea } from "../../components/StatefulTextarea/StatefulTextarea.component";
+
+
+interface RecordForm {
+  date: string;
+  time: string;
+  comment: string;
+}
+
 
 @Component({
   selector: 'RecordCreatePage',
   templateUrl: './RecordCreate.page.html',
-  imports: [MainLayout, RecordForm],
+  imports: [MainLayout, StatefulInput, StatefulTextarea, DropdownComponent, FormField, RouterLink],
 })
 export class RecordCreatePage implements OnInit {
   private readonly recordsService = inject(RecordsService);
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
 
-  minutes: WritableSignal<number> = signal(0);
-  date: WritableSignal<string> = signal('');
-  dateValidationMessage: string = '';
-  comment: WritableSignal<string> = signal('');
   selectedTask: WritableSignal<DropdownItem | null> = signal(null);
   taskOptions: WritableSignal<DropdownItem[]> = signal([]);
 
-  constructor() {
-    effect(() => {
-      const date = this.date();
-      if (!date)
-        this.dateValidationMessage = 'This field is required';
-    });
-  }
+  formModel = signal<RecordForm>({date: '', comment: '', time: ''});
+  form = form(this.formModel, (schemaPath) => {
+    required(schemaPath.date, {message: 'Date is required'});
+    required(schemaPath.time, {message: 'Spent time is required'});
+    time(schemaPath.time); 
+  });
 
 
   async ngOnInit() {
     const tasks = await this.tasksService.getAll();
     if (tasks.length) {
-      this.taskOptions.set(tasks.map(t => ({id: String(t.id), title: t.title})));
+      this.taskOptions.set(tasks.map(t => ({id: t.id, title: t.title})));
     }
   }
 
@@ -43,14 +49,14 @@ export class RecordCreatePage implements OnInit {
     if (!this.selectedTask())
       return;
 
-    if (!this.date())
+    if (this.form().invalid() || !this.selectedTask())
       return;
 
     const result = await this.recordsService.createRecord({
       task_id: Number(this.selectedTask()?.id),
-      minutes: this.minutes(), 
-      date: this.date(), 
-      comment: this.comment()
+      minutes: parseTimeToMinutes(this.formModel().time), 
+      date: this.formModel().date, 
+      comment: this.formModel().comment,
     });
     if (result)
       this.router.navigate(['/timetable']);

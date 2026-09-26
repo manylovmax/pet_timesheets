@@ -97,13 +97,20 @@
       [options]="taskOptions()"
       [value]="selectedTask"
     />
-    <TimeInputComponent 
-      label="Spent time"
-      [(value)]="minutes"
+    <StatefulInput 
+      label="Date"
+      type="date"
+      [formField]="form.date"
     />
-    <TextareaComponent 
+    <StatefulInput 
+      label="Spent time"
+      type="text"
+      [spellcheck]="false"
+      [formField]="form.time"
+    />
+    <StatefulTextarea 
       label="Comment"
-      [(value)]="comment"
+      [formField]="form.comment"
     />
     <div class="flex gap-4 justify-between w-full">
       <div 

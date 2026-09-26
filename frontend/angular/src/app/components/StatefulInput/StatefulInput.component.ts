@@ -9,6 +9,7 @@ import { DisabledReason, FormValueControl, ValidationError, WithOptionalFieldTre
 })
 export class StatefulInput implements FormValueControl<string>  {
   type = input<'text' | 'password' | 'email' | 'date' | 'number'>('text');
+  spellcheck = input<boolean>(true);
   label = input<string>('');
   id = uuidv4();
   value = model<string>('');
