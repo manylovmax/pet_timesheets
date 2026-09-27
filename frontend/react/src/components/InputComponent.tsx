@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface onInputChangeCallback {
@@ -10,14 +10,12 @@ interface InputComponentProps {
   type: 'text' | 'password' | 'email' | 'number' | 'date';
   initialValue?: string;
   onInputChange: onInputChangeCallback;
+  errors?: string[];
 } 
 
-export default function InputComponent({label, type = 'text', onInputChange, initialValue = ''} : InputComponentProps) {
+export default function InputComponent({label, type = 'text', onInputChange, initialValue = '', errors} : InputComponentProps) {
   const id = uuidv4();
   const [value, setValue] = useState(initialValue);
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     onInputChange(event.target.value);
@@ -34,6 +32,17 @@ export default function InputComponent({label, type = 'text', onInputChange, ini
         value={value}
         onChange={handleInputChange}  
       />
+
+      { errors && errors.length && 
+        <div
+          className="flex flex-col gap-4" >
+          {errors.map((error, i) => 
+          <div 
+            key={i}
+            className="text-red-400 px-2">{ error }</div>
+          )}
+        </div>
+      }
     </div>
   )
 }
