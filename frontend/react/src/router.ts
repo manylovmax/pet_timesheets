@@ -5,6 +5,7 @@ import SignupPage from "./pages/SignupPage";
 import RecordsPage from "./pages/RecordsPage";
 import RecordCreatePage from "./pages/RecordCreatePage";
 import RecordUpdatePage from "./pages/RecordUpdatePage";
+import TestPage from "./pages/TestPage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       middleware: [authMiddleware],
       loader: userLoader,
       Component: RecordUpdatePage,
+    },
+    {
+      path: "/test",
+      Component: TestPage,
     },
   ]
 );
