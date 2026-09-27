@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface onTextareaChangeCallback {
@@ -14,9 +14,6 @@ interface TextareaComponentProps {
 export default function TextareaComponent({label, onChange, initialValue = ''} : TextareaComponentProps) {
   const id = uuidv4();
   const [value, setValue] = useState(initialValue);
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue]);
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value);
     onChange(event.target.value);
