@@ -1,5 +1,7 @@
 import Dropdown, { type DropdownItem } from "../components/Dropdown";
 import InputComponent from "../components/InputComponent";
+import TimetableComponent from "../components/TimetableComponent";
+import MainLayout from "../layouts/MainLayout";
 
 export default function TestPage() {
 
@@ -10,19 +12,22 @@ export default function TestPage() {
     {id: 4, title: "4"},
   ];
   return (
-    <div className="flex flex-col gap-4 bg-gray-300 w-[360px]">
-      <InputComponent 
-        type="text"
-        onInputChange={(input) => {
-          console.log('InputComponent', input);
-        }}
-      />
-      <Dropdown
-        options={dropdownOptions}
-        onInputChange={(item) => {
-          console.log('Dropdown', item?.id, item?.title);
-        }}
-      />
-    </div>
+    <MainLayout>
+      <div className="flex flex-col gap-4 bg-gray-300 w-[360px]">
+        <InputComponent 
+          type="text"
+          onInputChange={(input) => {
+            console.log('InputComponent', input);
+          }}
+        />
+        <Dropdown
+          options={dropdownOptions}
+          onInputChange={(item) => {
+            console.log('Dropdown', item?.id, item?.title);
+          }}
+        />
+      </div>
+      <TimetableComponent />
+    </MainLayout>
   )
 }
