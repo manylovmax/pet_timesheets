@@ -2,22 +2,22 @@ import apiClient from "../apiClient";
 import config from "../constants";
 
 
-
-export interface TimesheetsRecord {
+export interface TimesheetsTask {
   id: number,
   user_id: number,
-  task_id: number,
-  task_title?: string,
-  minutes: number,
-  date: string,
-  comment: string,
+  project_id: number,
+  title: string,
+  description: string,
+  code: string,
   deleted: boolean,
+  total_minutes?: number;
 }
 
-export class RecordsService {
-  async getAllRecords(): Promise<TimesheetsRecord[]> {
+
+export class TasksService {
+  async getAll(): Promise<TimesheetsTask[]> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.get(config.api.records, {
+    const result = await apiClient.get(config.api.tasks, {
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json'
@@ -33,15 +33,15 @@ export class RecordsService {
     return [];
   }
 
-  async createRecord(params: {
-    task_id: number,
-    minutes: number,
-    date: string,
-    comment: string,
+  async create(props: {
+    project_id: number,
+    title: string,
+    code: string,
+    description: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.post(config.api.record,
-      params,
+    const result = await apiClient.post(config.api.task,
+      props,
       {
         headers: {
           'access-token': accessToken,
@@ -60,11 +60,11 @@ export class RecordsService {
   }
 
 
-  async deleteRecord(record_id: number): Promise<boolean> {
+  async delete(task_id: number): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.delete(config.api.record, {
+    const result = await apiClient.delete(config.api.task, {
       params: {
-        record_id,
+        task_id,
       },
       headers: {
         'access-token': accessToken,
@@ -78,15 +78,14 @@ export class RecordsService {
     return result?.data?.success;
   }
 
-  async updateRecord(params: {
+  async update(params: {
     task_id: number,
-    record_id: number,
-    minutes: number,
-    date: string,
-    comment: string,
+    title: string,
+    description: string,
+    code: string,
   }): Promise<boolean> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.patch(config.api.record, 
+    const result = await apiClient.patch(config.api.task, 
       params,
       {
       headers: {
@@ -101,11 +100,11 @@ export class RecordsService {
     return result?.data?.success;
   }
 
-  async getRecord(record_id: number): Promise<TimesheetsRecord | null> {
+  async get(task_id: number): Promise<TimesheetsTask | null> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.get(config.api.record, {
+    const result = await apiClient.get(config.api.task, {
       params: {
-        record_id,
+        task_id,
       },
       headers: {
         'access-token': accessToken,
@@ -122,11 +121,10 @@ export class RecordsService {
     return null;
   }
 
-  async getRecordsForPeriod(startDate: string, endDate: string): Promise<TimesheetsRecord[]> {
+  async getAllForProject(project_id: number): Promise<TimesheetsTask[]> {
     const accessToken = localStorage.getItem(config.constants.accessTokenLSKey);
-    const result = await apiClient.post(config.api.recordsForPeriod, 
-    { startDate, endDate },  
-    {
+    const result = await apiClient.get(config.api.tasksForProject, {
+      params: { project_id },
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json'
@@ -144,4 +142,4 @@ export class RecordsService {
 }
 
 
-export default RecordsService;
+export default TasksService;
