@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface onInputChangeCallback {
@@ -6,20 +5,17 @@ interface onInputChangeCallback {
 }
 
 interface InputComponentProps {
+  value: string;
   label?: string;
   type: 'text' | 'password' | 'email' | 'number' | 'date';
-  initialValue?: string;
   onInputChange: onInputChangeCallback;
   errors?: string[];
+  spellcheck?: boolean;
 } 
 
-export default function InputComponent({label, type = 'text', onInputChange, initialValue = '', errors} : InputComponentProps) {
+export default function InputComponent({label, type = 'text', onInputChange, errors, spellcheck = true, value} : InputComponentProps) {
   const id = uuidv4();
-  const [value, setValue] = useState(initialValue);
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
-    onInputChange(event.target.value);
-  };
+  console.log('InputComponent', value);
 
   return (
     <div className='flex flex-col'>
@@ -30,17 +26,18 @@ export default function InputComponent({label, type = 'text', onInputChange, ini
         className='bg-white rounded-2xl px-2' 
         type={type} 
         value={value}
-        onChange={handleInputChange}  
+        onChange={(e) => onInputChange(e.target.value)}  
+        spellCheck={spellcheck}
       />
 
-      { errors && errors.length && 
+      { errors && errors?.length > 0 && 
         <div
-          className="flex flex-col gap-4" >
-          {errors.map((error, i) => 
+          className="flex flex-col" >
+          { errors.map((error, i) => 
           <div 
             key={i}
             className="text-red-400 px-2">{ error }</div>
-          )}
+          ) }
         </div>
       }
     </div>

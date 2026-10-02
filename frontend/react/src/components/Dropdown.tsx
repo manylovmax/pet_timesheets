@@ -17,30 +17,36 @@ interface componentProps {
   label?: string,
   options: DropdownItem[],
   errors?: string[],
-  initialValue?: DropdownItem;
+  value: DropdownItem | undefined;
   onInputChange: onInputChangeCallback;
 } 
 
 
-export default function Dropdown({label, onInputChange, initialValue, options, errors} : componentProps) {
+export default function Dropdown({label, onInputChange, options, errors, value} : componentProps) {
   const editableRef = useRef<HTMLDivElement>(null);
   const getItemHTML = (title) => {
     return '<div class="rounded bg-gray-200 px-1 w-fit">' + title + '</div>'
   }
-  const [value, setValue] = useState(initialValue);
-  const [listVisible, setListVisible] = useState(false);
-  const [visibleOptions, setVisibleOptions] = useState(options ? options : []);
 
   useEffect(() => {
-    onInputChange(value);
-  }, [value]);
+    if (editableRef.current) {
+      if (value) {
+        editableRef.current.innerHTML = getItemHTML(value.title); 
+      } else {
+        editableRef.current.innerHTML = '';
+      }
+    }
+  }, [value])
+
+  const [listVisible, setListVisible] = useState(false);
+  const [visibleOptions, setVisibleOptions] = useState(options ? options : []);
 
   function onInput(event: InputEvent<HTMLDivElement>) {
     event.stopPropagation(); 
     const element = event.target as HTMLDivElement;
     let newValue = String(element.innerText);
     if (value) {
-      setValue(undefined);
+      onInputChange(undefined);
       element.innerHTML = '';
       newValue = '';
     }
@@ -66,7 +72,7 @@ export default function Dropdown({label, onInputChange, initialValue, options, e
   function onSelect(id: number) {
     const selected = options.find(o => o.id === id);
     if (selected) {
-      setValue(selected);
+      onInputChange(selected);
       const htmlString = getItemHTML(selected.title)
       if (editableRef.current)
         editableRef.current.innerHTML = htmlString;
@@ -104,9 +110,9 @@ export default function Dropdown({label, onInputChange, initialValue, options, e
         onMouseDown={() => onSelect(option.id)}>{ option.title }</div>
       )}
     </div>
-      { errors && errors.length && 
+      { errors && errors?.length > 0 && 
         <div
-          className="flex flex-col gap-4" >
+          className="flex flex-col" >
           {errors.map((error, i) => 
           <div 
             key={i}

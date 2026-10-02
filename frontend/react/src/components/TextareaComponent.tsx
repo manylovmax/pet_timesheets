@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface onTextareaChangeCallback {
@@ -7,17 +6,12 @@ interface onTextareaChangeCallback {
 
 interface TextareaComponentProps {
   label?: string;
-  initialValue?: string;
+  value: string;
   onChange: onTextareaChangeCallback;
 } 
 
-export default function TextareaComponent({label, onChange, initialValue = ''} : TextareaComponentProps) {
+export default function TextareaComponent({label, onChange, value} : TextareaComponentProps) {
   const id = uuidv4();
-  const [value, setValue] = useState(initialValue);
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(event.target.value);
-    onChange(event.target.value);
-  };
 
   return (
     <div className='flex flex-col'>
@@ -27,7 +21,7 @@ export default function TextareaComponent({label, onChange, initialValue = ''} :
         id={id}
         className='bg-white rounded-2xl px-2' 
         value={value}
-        onChange={handleInputChange}  
+        onChange={e => onChange(e.target.value)}  
       ></textarea>
     </div>
   )
