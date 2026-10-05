@@ -88,10 +88,10 @@ if (tasks.length) {
 function initializeWeekdays(startDay: Date) {
   const today = new Date();
   const weekDays: weekDay[] = [];
-  const date = new Date(startDay);
-  const dayOfWeek = date.getDay();// starting from Sunday = 0, Saturday = 6
+  const dayOfWeek = startDay.getDay();// starting from Sunday = 0, Saturday = 6
   const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   for (let i = 0; i < 7; i++) {
+    const date = new Date(startDay);
     date.setDate(startDay.getDate() - daysToSubtract + i)// remove the daysToSubtract term to start from Sunday
     weekDays.push({
     title: date.toLocaleDateString('en-US', { weekday: 'long' }), 
