@@ -41,15 +41,15 @@ export default function TimetableComponent() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [taskOptions, setTaskOptions] = useState<DropdownItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
-  const currentDate = new Date();
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   
   const initializeWeekdays = function(startDay: Date) {
     const today = new Date();
     const weekDays: weekDay[] = [];
-    const date = new Date(startDay);
-    const dayOfWeek = date.getDay();// starting from Sunday = 0, Saturday = 6
+    const dayOfWeek = startDay.getDay();// starting from Sunday = 0, Saturday = 6
     const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     for (let i = 0; i < 7; i++) {
+      const date = new Date(startDay);
       date.setDate(startDay.getDate() - daysToSubtract + i)// remove the daysToSubtract term to start from Sunday
       weekDays.push({
         title: date.toLocaleDateString('en-US', { weekday: 'long' }), 
@@ -65,9 +65,9 @@ export default function TimetableComponent() {
     }
     setGlobalWeekDays(weekDays);
     setWeekDaysPeriodString( 
-      weekDays[0]?.dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) || ''
+      (weekDays[0]?.dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) || '')
       + ' - ' +
-      weekDays[weekDays.length - 1]?.dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) || '');
+      (weekDays[weekDays.length - 1]?.dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) || ''));
 
     return weekDays;
   }
@@ -146,17 +146,15 @@ export default function TimetableComponent() {
 
   const goToPreviousWeek = async function() {
     currentDate.setDate(currentDate.getDate() - 7);
-    console.log('goToPreviousWeek currentDate', currentDate);
+    setCurrentDate(currentDate)
     const weekDays = initializeWeekdays(currentDate);
-    console.log('goToPreviousWeek weekDays', weekDays);
     await refreshRecords(weekDays);
   }
 
   const goToNextWeek = async function() {
     currentDate.setDate(currentDate.getDate() + 7);
-    console.log('goToNextWeek currentDate', currentDate);
+    setCurrentDate(currentDate)
     const weekDays = initializeWeekdays(currentDate);
-    console.log('goToNextWeek weekDays', weekDays);
     await refreshRecords(weekDays);
   }
 
