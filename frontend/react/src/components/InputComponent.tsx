@@ -15,7 +15,6 @@ interface InputComponentProps {
 
 export default function InputComponent({label, type = 'text', onInputChange, errors, spellcheck = true, value} : InputComponentProps) {
   const id = uuidv4();
-  console.log('InputComponent', value);
 
   return (
     <div className='flex flex-col'>
