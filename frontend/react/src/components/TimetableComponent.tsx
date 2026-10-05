@@ -46,17 +46,17 @@ export default function TimetableComponent() {
   const initializeWeekdays = function(startDay: Date) {
     const today = new Date();
     const weekDays: weekDay[] = [];
+    const date = new Date(startDay);
+    const dayOfWeek = date.getDay();// starting from Sunday = 0, Saturday = 6
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     for (let i = 0; i < 7; i++) {
-      const date = new Date(startDay);
-      const dayOfWeek = date.getDay();// starting from Sunday = 0, Saturday = 6
-      const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       date.setDate(startDay.getDate() - daysToSubtract + i)// remove the daysToSubtract term to start from Sunday
       weekDays.push({
         title: date.toLocaleDateString('en-US', { weekday: 'long' }), 
         date: date.getDate(),
         month: date.getMonth() + 1,
         year: date.getFullYear(),
-        dateObj: date,
+        dateObj: new Date(date),
         index: i,
         records: [],
         isToday: today.toLocaleDateString('en-CA') == date.toLocaleDateString('en-CA'),
@@ -146,13 +146,17 @@ export default function TimetableComponent() {
 
   const goToPreviousWeek = async function() {
     currentDate.setDate(currentDate.getDate() - 7);
+    console.log('goToPreviousWeek currentDate', currentDate);
     const weekDays = initializeWeekdays(currentDate);
+    console.log('goToPreviousWeek weekDays', weekDays);
     await refreshRecords(weekDays);
   }
 
   const goToNextWeek = async function() {
     currentDate.setDate(currentDate.getDate() + 7);
+    console.log('goToNextWeek currentDate', currentDate);
     const weekDays = initializeWeekdays(currentDate);
+    console.log('goToNextWeek weekDays', weekDays);
     await refreshRecords(weekDays);
   }
 
