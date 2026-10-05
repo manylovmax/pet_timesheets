@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { RecordsService, type TimesheetsRecord } from "../services/records.service";
 import { useEffect, useState } from "react";
-import TasksService, { type TimesheetsTask } from "../services/tasks.service";
+import TasksService from "../services/tasks.service";
 import { minutesToString, parseTime } from "../utils/time";
 import type { DropdownItem } from "./Dropdown";
 import { NavLink } from "react-router";
@@ -99,7 +99,6 @@ export default function TimetableComponent() {
   const onEdit = function(recordId: number) {
     const record = records.find(r => r.id === recordId);
     setEditingRecord(record);
-    console.log('record', record);
     if (record) {
       setTime(minutesToString(record?.minutes));
       setDate(String(record?.date));
