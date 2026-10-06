@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { RecordsService, type TimesheetsRecord } from "../services/records.service";
 import { useEffect, useState } from "react";
 import TasksService from "../services/tasks.service";
-import { minutesToString, parseTime } from "../utils/time";
+import { minutesToString, parseTime, validateTimeString } from "../utils/time";
 import type { DropdownItem } from "./Dropdown";
 import { NavLink } from "react-router";
 import { X } from 'lucide-react';
@@ -29,18 +29,47 @@ interface weekDay {
 export default function TimetableComponent() {
   const [globalWeekDays, setGlobalWeekDays] = useState<weekDay[]>([]);
   const [weekDaysPeriodString, setWeekDaysPeriodString] = useState<string>('');
-  const [records, setRecords] = useState<TimesheetsRecord[]>([]);
+  const [globalRecords, setGlobalRecords] = useState<TimesheetsRecord[]>([]);
   const [editingRecord, setEditingRecord] = useState<TimesheetsRecord | undefined>();
   const [time, setTime] = useState<string>('');
   const [timeErrors, setTimeErrors] = useState<string[]>([]);
+  useEffect(() => {
+    const errors: string[] = [];
+    if (!time)
+      errors.push('Spent time is required');
+
+    if (!validateTimeString(time))
+      errors.push('Input time in format "Xh Ym", where X and Y are integers, and first or second group is optional.');
+  
+    setTimeErrors(errors);
+  }, [time]);
+
   const [date, setDate] = useState<string>('');
   const [dateErrors, setDateErrors] = useState<string[]>([]);
+  useEffect(() => {
+    const errors: string[] = [];
+    if (!date)
+      errors.push('Date is required');
+  
+    setDateErrors(errors);
+  }, [date]);
   const [comment, setComment] = useState<string>('');
   const [selectedTask, setSelectedTask] = useState<DropdownItem | undefined>();
   const [taskErrors, setTaskErrors] = useState<string[]>([]);
+  useEffect(() => {
+    const errors: string[] = [];
+    if (!selectedTask)
+      errors.push('Task is required');
+  
+    setTaskErrors(errors);
+  }, [selectedTask]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [taskOptions, setTaskOptions] = useState<DropdownItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
+  useEffect(() => {
+    setIsValid(Boolean(taskErrors.length || dateErrors.length || timeErrors.length));
+  }, [taskErrors, dateErrors, timeErrors]);
+
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   
   const initializeWeekdays = function(startDay: Date) {
@@ -82,8 +111,10 @@ export default function TimetableComponent() {
     }
     const startDate = weekDays[0]?.dateObj.toLocaleDateString('en-CA');
     const endDate = weekDays[weekDays.length - 1]?.dateObj.toLocaleDateString('en-CA');
+    let records: TimesheetsRecord[] = [];
     if (startDate && endDate) {
-      setRecords(await recordsService.getRecordsForPeriod(startDate, endDate));
+      records = await recordsService.getRecordsForPeriod(startDate, endDate);
+      setGlobalRecords(records);
     }
     for (let i = 0; i < records.length; i++) {
       const record = records[i];
@@ -97,7 +128,7 @@ export default function TimetableComponent() {
   }
 
   const onEdit = function(recordId: number) {
-    const record = records.find(r => r.id === recordId);
+    const record = globalRecords.find(r => r.id === recordId);
     setEditingRecord(record);
     if (record) {
       setTime(minutesToString(record?.minutes));
