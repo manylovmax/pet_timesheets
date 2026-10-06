@@ -67,7 +67,7 @@ export default function TimetableComponent() {
   const [taskOptions, setTaskOptions] = useState<DropdownItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   useEffect(() => {
-    setIsValid(Boolean(taskErrors.length || dateErrors.length || timeErrors.length));
+    setIsValid(!(taskErrors.length || dateErrors.length || timeErrors.length));
   }, [taskErrors, dateErrors, timeErrors]);
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
