@@ -28,6 +28,13 @@ export default function Dropdown({label, onInputChange, options, errors, value} 
     return '<div class="rounded bg-gray-200 px-1 w-fit">' + title + '</div>'
   }
 
+  const [listVisible, setListVisible] = useState(false);
+  const [visibleOptions, setVisibleOptions] = useState(options);
+  
+  useEffect(() => {
+    setVisibleOptions(options);
+  }, [options]);
+
   useEffect(() => {
     if (editableRef.current) {
       if (value) {
@@ -36,10 +43,8 @@ export default function Dropdown({label, onInputChange, options, errors, value} 
         editableRef.current.innerHTML = '';
       }
     }
-  }, [value])
+  }, [value]);
 
-  const [listVisible, setListVisible] = useState(false);
-  const [visibleOptions, setVisibleOptions] = useState(options ? options : []);
 
   function onInput(event: InputEvent<HTMLDivElement>) {
     event.stopPropagation(); 
