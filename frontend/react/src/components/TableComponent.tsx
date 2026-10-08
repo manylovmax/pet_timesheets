@@ -27,7 +27,7 @@ export default function TableComponent({onDelete, onUpdate, onOpen, columns = []
   }, [rows, onDelete, onUpdate]);
 
   return columns.length && 
-  <div className="w-full overflow-x-scroll">
+  <div className="w-full overflow-auto">
     <table className='w-full min-w-[600px] py-2'>{
       <thead>
         <tr>
@@ -40,18 +40,18 @@ export default function TableComponent({onDelete, onUpdate, onOpen, columns = []
       <tbody>
       {rows.map((r, i) => <tr key={i}>
         {columns.map(c =>  c.attribute === openObjectPageColumnAttribute ? 
-        <th key={c.attribute}>
+        <td key={c.attribute}>
           <div 
-            className='underline'
+            className='underline cursor-pointer'
             onClick={() => onOpen ? onOpen(i) : {}}  
           >{r[c.attribute]}</div>
-        </th>  :
+        </td>  :
         <td key={c.attribute}>{r[c.attribute]}</td>
       )}
         {<td key='actions'>
           <div className='flex gap-2 w-full justify-center'>
-            { onUpdate && <Pencil size={32} color="black" strokeWidth={1} onClick={() => onUpdate(i)}>Update</Pencil> }
-            { onDelete && <Trash size={32} color="black" strokeWidth={1} onClick={() => onDelete(i)}>Delete</Trash> }
+            { onUpdate && <div className='underline cursor-pointer' onClick={() => onUpdate(i)}>Update</div> }
+            { onDelete && <div className='underline cursor-pointer' onClick={() => onDelete(i)}>Delete</div> }
           </div>
         </td>}
       </tr>)}
