@@ -7,6 +7,7 @@ import RecordCreatePage from "./pages/RecordCreatePage";
 import RecordUpdatePage from "./pages/RecordUpdatePage";
 import TestPage from "./pages/TestPage";
 import TimetablePage from "./pages/TimetablePage";
+import ProjectsPage from "./pages/ProjectsPage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -30,6 +31,14 @@ export async function userLoader({
 
 const router = createBrowserRouter([
     {
+      path: "/signin",
+      Component: SigninPage,
+    },
+    {
+      path: "/signup",
+      Component: SignupPage,
+    },
+    {
       path: "/",
       loader: () => redirect("/timetable"), 
     },
@@ -40,12 +49,10 @@ const router = createBrowserRouter([
       Component: TimetablePage,
     },
     {
-      path: "/signin",
-      Component: SigninPage,
-    },
-    {
-      path: "/signup",
-      Component: SignupPage,
+      path: "/projects",
+      middleware: [authMiddleware],
+      loader: userLoader,
+      Component: ProjectsPage,
     },
     {
       path: "/record-create",
