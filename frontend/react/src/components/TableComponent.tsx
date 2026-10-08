@@ -14,11 +14,13 @@ export interface TableColumn {
 interface TableComponentProps {
   columns?: TableColumn[];
   rows?: Record<string, string>[];
+  openObjectPageColumnAttribute?: string;
   onDelete?: onActionCallback;
   onUpdate?: onActionCallback;
+  onOpen?: onActionCallback;
 } 
 
-export default function TableComponent({onDelete, onUpdate, columns = [], rows = []}: TableComponentProps) {  
+export default function TableComponent({onDelete, onUpdate, onOpen, columns = [], rows = [], openObjectPageColumnAttribute = ''}: TableComponentProps) {  
   const [colspan, setColspan] = useState(columns.length + (onDelete || onUpdate ? 1 : 0));
   useEffect(() => {
     setColspan(columns.length + (onDelete || onUpdate ? 1 : 0));
@@ -29,13 +31,23 @@ export default function TableComponent({onDelete, onUpdate, columns = [], rows =
     <table className='w-full min-w-[600px] py-2'>{
       <thead>
         <tr>
-          {columns.map(c => <th key={c.attribute}>{c.label}</th>)}
+          { columns.map(c => 
+            <th key={c.attribute}>{c.label}</th>)
+          }
           { (onUpdate || onDelete) && <th key='actions'>Actions</th>}
         </tr>
       </thead>}
       <tbody>
       {rows.map((r, i) => <tr key={i}>
-        {columns.map(c => <td key={c.attribute}>{r[c.attribute]}</td>)}
+        {columns.map(c =>  c.attribute === openObjectPageColumnAttribute ? 
+        <th key={c.attribute}>
+          <div 
+            className='underline'
+            onClick={() => onOpen ? onOpen(i) : {}}  
+          >{r[c.attribute]}</div>
+        </th>  :
+        <td key={c.attribute}>{r[c.attribute]}</td>
+      )}
         {<td key='actions'>
           <div className='flex gap-2 w-full justify-center'>
             { onUpdate && <Pencil size={32} color="black" strokeWidth={1} onClick={() => onUpdate(i)}>Update</Pencil> }
