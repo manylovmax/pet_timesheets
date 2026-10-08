@@ -71,7 +71,7 @@ export default function ProjectsPage() {
           <div className="text-2xl">Projects</div>
           <NavLink
             to="/project/create"
-            className="underline"
+            className="underline cursor-pointer"
           >Create
           </NavLink>
         </div>
