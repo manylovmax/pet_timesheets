@@ -78,7 +78,7 @@ export default function ProjectUpdatePage() {
     <MainLayout>
       <div className="grid place-items-center h-screen">
         <div className="bg-gray-200 rounded-2xl p-4 flex flex-col gap-4 items-center w-[360px] sm:w-[400px]">
-          <div>Update project</div>
+          <div>Update project { project?.title || '' }</div>
           <InputComponent
             label="Title"
             type="text"
