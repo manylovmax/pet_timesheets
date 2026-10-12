@@ -226,7 +226,7 @@ export default function TimetableComponent() {
       </div>
       <div className="flex flex-row-reverse pb-4 gap-4 items-end">
         <NavLink
-          to="/record-create"
+          to="/record/create"
           className="underline"
         >Add a record
         </NavLink>
@@ -246,7 +246,7 @@ export default function TimetableComponent() {
       </div>
       <div className="flex flex-row-reverse pb-4 gap-2">
         <NavLink
-          to="/record-create"
+          to="/record/create"
           className="cursor-pointer p-2 underline select-none"
         >Add a record
         </NavLink>

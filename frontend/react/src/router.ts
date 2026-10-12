@@ -60,7 +60,7 @@ const router = createBrowserRouter([
       Component: ProjectUpdatePage,
     },
     {
-      path: "/record-create",
+      path: "/record/create",
       middleware: [authMiddleware],
       loader: userLoader,
       Component: RecordCreatePage,
