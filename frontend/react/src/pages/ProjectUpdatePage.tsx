@@ -62,7 +62,7 @@ export default function ProjectUpdatePage() {
 
 
   const update = async (): Promise<void> => {
-    if (project?.id) {
+    if (project?.id && isValid) {
       const result = await projectsService.update({
         project_id: project?.id,
         title,

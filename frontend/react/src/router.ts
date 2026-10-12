@@ -6,6 +6,7 @@ import RecordCreatePage from "./pages/RecordCreatePage";
 import TestPage from "./pages/TestPage";
 import TimetablePage from "./pages/TimetablePage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectUpdatePage from "./pages/ProjectUpdatePage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -51,6 +52,12 @@ const router = createBrowserRouter([
       middleware: [authMiddleware],
       loader: userLoader,
       Component: ProjectsPage,
+    },
+    {
+      path: "/project/:id/update",
+      middleware: [authMiddleware],
+      loader: userLoader,
+      Component: ProjectUpdatePage,
     },
     {
       path: "/record-create",
