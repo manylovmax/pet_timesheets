@@ -14,12 +14,16 @@ const columns: Array<TableColumn> = [
     attribute: 'title',
   },
   {
-    label: 'Spent time',
-    attribute: 'spent_time',
+    label: 'Code',
+    attribute: 'code',
   },
   {
     label: 'Description',
     attribute: 'description',
+  },
+  {
+    label: 'Spent time',
+    attribute: 'spent_time',
   },
 ];
 

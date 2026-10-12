@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { NavLink, useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 
 import MainLayout from "../layouts/MainLayout";
@@ -99,7 +99,12 @@ export default function ProjectUpdatePage() {
             onChange={value => setDescription(value)}
           />
 
-          <div className="flex gap-4 justify-between w-full flex-row-reverse">
+          <div className="flex gap-4 justify-between w-full">
+            <NavLink
+              to="/projects/"
+              className="underline cursor-pointer"
+            >To projects
+            </NavLink>
             <div 
               className={clsx("select-none", {
                 'underline': isValid,

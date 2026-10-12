@@ -8,6 +8,9 @@ import TimetablePage from "./pages/TimetablePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectUpdatePage from "./pages/ProjectUpdatePage";
 import ProjectCreatePage from "./pages/ProjectCreatePage";
+import ProjectPage from "./pages/ProjectPage";
+import TaskCreatePage from "./pages/TaskCreatePage";
+import TaskUpdatePage from "./pages/TaskUpdatePage";
 
 export const userContext = createContext<User | null>(null);
 
@@ -65,6 +68,24 @@ const router = createBrowserRouter([
       middleware: [authMiddleware],
       loader: userLoader,
       Component: ProjectUpdatePage,
+    },
+    {
+      path: "/project/:id",
+      middleware: [authMiddleware],
+      loader: userLoader,
+      Component: ProjectPage,
+    },
+    {
+      path: "/project/:id/create-task",
+      middleware: [authMiddleware],
+      loader: userLoader,
+      Component: TaskCreatePage,
+    },
+    {
+      path: "/project/:id/update-task/:taskId",
+      middleware: [authMiddleware],
+      loader: userLoader,
+      Component: TaskUpdatePage,
     },
     {
       path: "/record/create",
