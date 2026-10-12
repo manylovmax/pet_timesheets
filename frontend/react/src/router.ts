@@ -2,9 +2,7 @@ import { createBrowserRouter, createContext, redirect, type LoaderFunctionArgs }
 import AuthService, { type User } from "./services/auth.service";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
-import RecordsPage from "./pages/RecordsPage";
 import RecordCreatePage from "./pages/RecordCreatePage";
-import RecordUpdatePage from "./pages/RecordUpdatePage";
 import TestPage from "./pages/TestPage";
 import TimetablePage from "./pages/TimetablePage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -59,12 +57,6 @@ const router = createBrowserRouter([
       middleware: [authMiddleware],
       loader: userLoader,
       Component: RecordCreatePage,
-    },
-    {
-      path: "/record-update/:id",
-      middleware: [authMiddleware],
-      loader: userLoader,
-      Component: RecordUpdatePage,
     },
     {
       path: "/test",
