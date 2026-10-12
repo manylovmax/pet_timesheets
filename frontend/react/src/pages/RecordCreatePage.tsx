@@ -103,7 +103,7 @@ export default function RecordCreatePage() {
           />
           <InputComponent 
             label="Spent time"
-            type="number"
+            type="text"
             onInputChange={value => setTime(value)}
             value={time}  
             errors={timeErrors}
