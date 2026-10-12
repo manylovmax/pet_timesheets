@@ -1,4 +1,3 @@
-import { Pencil, Trash } from 'lucide-react';
 import './TableComponent.css';
 import { useEffect, useState } from 'react';
 
@@ -38,20 +37,21 @@ export default function TableComponent({onDelete, onUpdate, onOpen, columns = []
         </tr>
       </thead>}
       <tbody>
-      {rows.map((r, i) => <tr key={i}>
+      {rows.map((row, rowIndex) => <tr key={rowIndex}>
         {columns.map(c =>  c.attribute === openObjectPageColumnAttribute ? 
         <td key={c.attribute}>
           <div 
             className='underline cursor-pointer'
-            onClick={() => onOpen ? onOpen(i) : {}}  
-          >{r[c.attribute]}</div>
+            onClick={() => onOpen ? onOpen(rowIndex) : {}}  
+          >{row[c.attribute]}</div>
         </td>  :
-        <td key={c.attribute}>{r[c.attribute]}</td>
+        <td key={c.attribute}>{row[c.attribute]}</td>
       )}
-        {<td key='actions'>
+        { Boolean(onUpdate || onDelete) && 
+        <td key='actions'>
           <div className='flex gap-2 w-full justify-center'>
-            { onUpdate && <div className='underline cursor-pointer' onClick={() => onUpdate(i)}>Update</div> }
-            { onDelete && <div className='underline cursor-pointer' onClick={() => onDelete(i)}>Delete</div> }
+            { Boolean(onUpdate) && onUpdate && <div className='underline cursor-pointer' onClick={() => onUpdate(rowIndex)}>Update</div> }
+            { Boolean(onDelete) && onDelete && <div className='underline cursor-pointer' onClick={() => onDelete(rowIndex)}>Delete</div> }
           </div>
         </td>}
       </tr>)}
