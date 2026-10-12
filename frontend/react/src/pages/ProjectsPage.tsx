@@ -18,8 +18,8 @@ const columns: Array<TableColumn> = [
     attribute: 'spent_time',
   },
   {
-    label: 'Comment',
-    attribute: 'comment',
+    label: 'Description',
+    attribute: 'description',
   },
 ];
 
