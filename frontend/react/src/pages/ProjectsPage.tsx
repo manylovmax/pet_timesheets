@@ -57,11 +57,11 @@ export default function ProjectsPage() {
   }
 
   const updateProject = function(index: number) {
-    navigate('/project/' + index +'/update');
+    navigate('/project/' + projects[index]?.id +'/update');
   }
   
   const openProjectPage = function(index: number) {
-    navigate('/project/' + index);
+    navigate('/project/' + projects[index]?.id);
   }
 
   return (
