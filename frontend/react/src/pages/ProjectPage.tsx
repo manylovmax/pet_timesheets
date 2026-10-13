@@ -77,13 +77,19 @@ export default function ProjectPage() {
     <MainLayout>
       <div className="flex flex-col gap-8">
         <div className="flex place-items-end gap-4">
-          <div className="text-2xl">Tasks for project {project?.title}</div>
-          <NavLink
-            to={"/project/" + project?.id + "/create-task"}
-            className="underline cursor-pointer"
-          >Create
-          </NavLink>
+          <div className="text-2xl">Project</div>
+          <div className="flex place-items-end gap-4">
+            <div className="text-2xl">{ project?.title }</div>
+            <div>({ project?.code })</div>
+          </div>
         </div>
+        <div >{ project?.description }</div>
+        <NavLink
+          to={"/project/" + project?.id + "/create-task"}
+          className="underline cursor-pointer"
+        >Create task
+        </NavLink>
+        <div>Tasks</div>
         <TableComponent
           columns={columns}
           rows={rows}
