@@ -77,7 +77,7 @@ export default function ProjectPage() {
     <MainLayout>
       <div className="flex flex-col gap-8">
         <div className="flex place-items-end gap-4">
-          <div className="text-2xl">Project</div>
+          <div>Project</div>
           <div className="flex place-items-end gap-4">
             <div className="text-2xl">{ project?.title }</div>
             <div>({ project?.code })</div>
