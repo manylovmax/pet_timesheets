@@ -74,7 +74,7 @@ function goToUpdatePage(index: number) {
 </script>
 <template>
   <main-layout>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-4">
       <div class="flex place-items-end gap-4">
         <div>Project</div>
         <div class="flex place-items-end gap-4">
