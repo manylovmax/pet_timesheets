@@ -68,10 +68,10 @@ services:
     ports: 
       - 8082:80
   
-  # frontend_react:
-  #   build: frontend/react/
-  #   ports: 
-  #     - 8083:80
+  frontend_react:
+    build: frontend/react/
+    ports: 
+      - 8083:80
 
 volumes:
   timesheets_postgres_data:
