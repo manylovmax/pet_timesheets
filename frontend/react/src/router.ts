@@ -3,7 +3,6 @@ import AuthService, { type User } from "./services/auth.service";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
 import RecordCreatePage from "./pages/RecordCreatePage";
-import TestPage from "./pages/TestPage";
 import TimetablePage from "./pages/TimetablePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectUpdatePage from "./pages/ProjectUpdatePage";
