@@ -76,7 +76,7 @@ function goToUpdatePage(index: number) {
   <main-layout>
     <div class="flex flex-col gap-8">
       <div class="flex place-items-end gap-4">
-        <div class="text-2xl">Project</div>
+        <div>Project</div>
         <div class="flex place-items-end gap-4">
           <div class="text-2xl">{{ title }}</div>
           <div>({{ code }})</div>
