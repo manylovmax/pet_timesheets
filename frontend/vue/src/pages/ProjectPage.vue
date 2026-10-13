@@ -86,6 +86,7 @@ function goToUpdatePage(index: number) {
       <RouterLink 
         class="underline"
         :to="'/project/' + projectId + '/create-task'">Create task</RouterLink>
+      <div>Tasks</div>
       <table-component 
         :columns="columns"
         :rows="mappedTasks"
