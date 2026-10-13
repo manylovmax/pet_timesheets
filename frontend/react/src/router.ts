@@ -93,10 +93,6 @@ const router = createBrowserRouter([
       loader: userLoader,
       Component: RecordCreatePage,
     },
-    {
-      path: "/test",
-      Component: TestPage,
-    },
   ]
 );
 export default router;
