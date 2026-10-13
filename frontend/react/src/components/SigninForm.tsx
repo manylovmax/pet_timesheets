@@ -46,7 +46,7 @@ export default function SigninForm() {
       return;
 
     if (await authService.signin(password, email))
-      navigate('/records');
+      navigate('/timetable');
   }
   
   return (

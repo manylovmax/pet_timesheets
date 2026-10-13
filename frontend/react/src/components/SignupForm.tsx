@@ -66,7 +66,7 @@ export default function SignupForm() {
       return;
 
     if (await authService.signup({password, email, fullname}))
-      navigate('/records');
+      navigate('/timetable');
   }
   
   return (
